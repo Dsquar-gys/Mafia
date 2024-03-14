@@ -8,7 +8,5 @@ public partial class LobbyConfigView : UserControl
     public LobbyConfigView()
     {
         InitializeComponent();
-
-        MasterNameDisplay.Bind(TextBlock.TextProperty, Statistic.MasterNameSubject);
     }
 }

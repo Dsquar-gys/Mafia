@@ -8,8 +8,17 @@ namespace Mafia.ViewModels
 {
     public class LobbyConfigViewModel : Page
     {
+        #region Private fields
+        
         private int _indexer;
+        
+        #endregion
+        
+        #region Properties
+        
         public ObservableCollection<PlayerCard> Players { get; } = new();
+        
+        #endregion
 
         #region Commands
 

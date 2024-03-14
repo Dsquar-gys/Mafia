@@ -8,10 +8,7 @@ namespace Mafia.ViewModels
     {
         #region Private Fields
 
-        private readonly Page[] _pages = new Page[]{
-            new StarterViewModel(),
-            new LobbyConfigViewModel(),
-            new TeamsConfigViewModel()};
+        private readonly Page[] _pages;
         
         private Page _currentPage;
         private int _pageIndex;
@@ -36,10 +33,16 @@ namespace Mafia.ViewModels
         public MainWindowViewModel()
         {
             Instance ??= this;
+            
+            _pages = new Page[]{
+                new StarterViewModel(),
+                new LobbyConfigViewModel(),
+                new TeamsConfigViewModel()};
 
             CanMoveForward = this.WhenAnyValue(
                 x => x._pageIndex, x => x._pages.Length,
                 (cur, len) => cur < len - 1);
+            
             CanMoveBack = this.WhenAnyValue(x => x._pageIndex,
                 index => index > 0);
 

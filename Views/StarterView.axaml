@@ -11,9 +11,9 @@
              x:Class="Mafia.Views.StarterView"
 			 x:DataType="vm:StarterViewModel">
 
-	<UserControl.DataContext>
+	<Design.DataContext>
 		<vm:StarterViewModel />
-	</UserControl.DataContext>
+	</Design.DataContext>
 
 	<StackPanel Orientation="Vertical"
 				HorizontalAlignment="Center"
@@ -23,7 +23,6 @@
 				 Width="200"
 				 Watermark="Городской управляющий"
 				 Text="{Binding MasterName}"/>
-		<!--Добавить Command кнопке!-->
 		<Button Name="StarterButton"
 				Tag="NextGeneral"
 				HorizontalAlignment="Center"
@@ -32,10 +31,10 @@
 				FontSize="20"
 				Width="150"
 				IsEnabled="{Binding Launchable}"
-				Command="{Binding ChangeMasterName}">
+				Command="{Binding Source={x:Static vm:MainWindowViewModel.Instance}, Path=MoveNextCommand}">
 			<i:Interaction.Behaviors>
 				<iac:EventTriggerBehavior EventName="Click">
-					<iac:InvokeCommandAction Command="{Binding ParentViewModel.MoveNextCommand}"/>
+					<iac:InvokeCommandAction Command="{Binding ChangeMasterName}"/>
 				</iac:EventTriggerBehavior>
 			</i:Interaction.Behaviors>
 		</Button>

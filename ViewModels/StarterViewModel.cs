@@ -6,8 +6,14 @@ namespace Mafia.ViewModels
 {
     public class StarterViewModel : Page
     {
-        private string _masterName = Statistic.MasterNameProperty;
+        #region Private fields
+        
+        private string _masterName = "";
         private bool _launchable;
+        
+        #endregion
+        
+        #region Properties
 
         public string MasterName
         {
@@ -24,10 +30,16 @@ namespace Mafia.ViewModels
             get => _launchable;
             set => this.RaiseAndSetIfChanged(ref _launchable, value);
         }
+        
+        #endregion
+
+        #region Commands
 
         public ReactiveCommand<Unit, Unit> ChangeMasterName => ReactiveCommand.Create(() =>
         {
             Statistic.DefineMaster(MasterName);
         });
+
+        #endregion
     }
 }

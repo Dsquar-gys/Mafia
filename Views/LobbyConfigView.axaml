@@ -5,14 +5,14 @@
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
 			 xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
 			 xmlns:vm="using:Mafia.ViewModels"
-			 xmlns:models="using:Mafia.Models"
+             xmlns:models="using:Mafia.Models"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Mafia.Views.LobbyConfigView"
 			 x:DataType="vm:LobbyConfigViewModel">
 
-	<UserControl.DataContext>
+	<Design.DataContext>
 		<vm:LobbyConfigViewModel />
-	</UserControl.DataContext>
+	</Design.DataContext>
 
 	<Grid RowDefinitions="Auto, *">
 		
@@ -31,23 +31,20 @@
 						<TextBlock Name="MasterNameDisplay"
 						   VerticalAlignment="Center"
 						   Foreground="White"
-						   Text="Example"/>
+						   Text="{Binding Source={x:Static models:Statistic.MasterNameProperty}}"/>
 					</ScrollViewer>
 				</Border>
-				<Button Content="Change Master">
-					<i:Interaction.Behaviors>
-						<iac:EventTriggerBehavior EventName="Click">
-							<iac:InvokeCommandAction Command="{Binding ParentViewModel.MoveBackCommand}"/>
-						</iac:EventTriggerBehavior>
-					</i:Interaction.Behaviors>
-				</Button>
+				<Button Content="Change Master"
+				        Command="{Binding Source={x:Static vm:MainWindowViewModel.Instance},
+							Path=MoveBackCommand}" />
 			</StackPanel>
 			<Button Grid.Column="1"
 					Content="Add Player"
 					Command="{Binding AddPlayerCommand}"/>
 			<Button Grid.Column="2"
 					Content="Next"
-					Command="{Binding ParentViewModel.MoveNextCommand}">
+					Command="{Binding Source={x:Static vm:MainWindowViewModel.Instance},
+						Path=MoveNextCommand}">
 				<i:Interaction.Behaviors>
 					<iac:EventTriggerBehavior EventName="Click">
 						<iac:InvokeCommandAction Command="{Binding CommitPlayersCommand}"/>

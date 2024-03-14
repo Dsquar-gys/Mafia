@@ -2,6 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              xmlns:vm="using:Mafia.ViewModels"
              mc:Ignorable="d"
              d:DesignWidth="800"
@@ -9,9 +11,51 @@
              x:Class="Mafia.Views.TeamsConfigView"
              x:DataType="vm:TeamsConfigViewModel">
     
-    <UserControl.DataContext>
+    <Design.DataContext>
         <vm:TeamsConfigViewModel />
-    </UserControl.DataContext>
+    </Design.DataContext>
     
-    Welcome to Avalonia!
+    <Grid RowDefinitions="Auto, *">
+		
+        <!-- Header -->
+        <Grid Grid.Row="0"
+              ColumnDefinitions="*,*,*"
+              Margin="15">
+            <StackPanel Grid.Column="0"
+                        Orientation="Horizontal"
+                        Spacing="20">
+                <Button Content="Manage Players"
+                        Command="{Binding Source={x:Static vm:MainWindowViewModel.Instance},
+                            Path=MoveBackCommand}" />
+            </StackPanel>
+            <Border Grid.Column="1"
+                    Padding="5"
+                    Background="RoyalBlue"
+                    CornerRadius="5">
+                <TextBlock Text="Manage Teams"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Foreground="White"/>
+            </Border>
+            <Button Grid.Column="2"
+                    Content="Next"
+                    Command="{Binding Source={x:Static vm:MainWindowViewModel.Instance},
+                        Path=MoveNextCommand}" />
+        </Grid>
+        
+        <!-- Body -->
+        <Border Grid.Row="1"
+                Background="RoyalBlue">
+            <!-- TODO -->
+        </Border>
+
+        <!-- Styles -->
+        <Grid.Styles>
+            <Style Selector="Button">
+                <Setter Property="HorizontalAlignment" Value="Center" />
+            </Style>
+        </Grid.Styles>
+        
+    </Grid>
+    
 </UserControl>
