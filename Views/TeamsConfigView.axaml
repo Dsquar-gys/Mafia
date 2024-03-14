@@ -46,7 +46,39 @@
         <!-- Body -->
         <Border Grid.Row="1"
                 Background="RoyalBlue">
+            
             <!-- TODO -->
+            <Grid ColumnDefinitions="*,Auto,*,Auto,*">
+                
+                <!-- Splitters -->
+                <GridSplitter Grid.Column="1" />
+                <GridSplitter Grid.Column="3" />
+                
+                <Border Grid.Column="0"
+                        Background="Firebrick"
+                        Padding="10">
+                    
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <ListBox ItemsSource="{Binding TransparentPlayers}"/>
+                    </ScrollViewer>
+                    
+                </Border>
+                
+                <Border Grid.Column="2"
+                        Background="Indigo"
+                        Padding="10">
+                    
+                </Border>
+                
+                <Border Grid.Column="4"
+                        Background="Plum"
+                        Padding="10">
+                    
+                </Border>
+                
+            </Grid>
+            
         </Border>
 
         <!-- Styles -->
