@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="App.axaml" value="Mafia.csproj" />
+        <entry key="Templated Controls/PlayerCard.axaml" value="Mafia.csproj" />
+        <entry key="Views/LobbyConfigView.axaml" value="Mafia.csproj" />
+        <entry key="Views/MainWindow.axaml" value="Mafia.csproj" />
+        <entry key="Views/StarterView.axaml" value="Mafia.csproj" />
+        <entry key="Views/TeamsConfigView.axaml" value="Mafia.csproj" />
+      </map>
+    </option>
+  </component>
+</project>

@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Reactive;
 using System.Reactive.Subjects;
+using DynamicData;
+using Mafia.Templated_Controls;
+using ReactiveUI;
 
 namespace Mafia.Models
 {
@@ -8,21 +10,21 @@ namespace Mafia.Models
     {
         #region Observables
 
-        public static Subject<string> MasterNameObservable { get; } = new Subject<string>();
+        public static Subject<string> MasterNameSubject { get; } = new();
 
         #endregion
 
         #region For Statistic
 
-        public static IEnumerable<PlayerCard> Players { get; set; } = new ObservableCollection<PlayerCard>();
+        public static SourceCache<PlayerCard, string> Players => new(x => x.PlayerName);
         public static string MasterNameProperty { get; private set; } = "";
 
         #endregion
-
+        
         public static void DefineMaster(string name)
         {
             MasterNameProperty = name;
-            MasterNameObservable.OnNext(name);
+            MasterNameSubject.OnNext(name);
         }
     }
 }

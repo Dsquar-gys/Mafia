@@ -1,16 +1,17 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="using:Mafia">
+        xmlns:controls="using:Mafia"
+        xmlns:templatedControls="clr-namespace:Mafia.Templated_Controls">
   <Design.PreviewWith>
 	  <Border Padding="10"
 			  Background="RoyalBlue">
 		  <Border Background="Red">
-			  <controls:PlayerCard />
+			  <templatedControls:PlayerCard />
 		  </Border>
 	  </Border>
   </Design.PreviewWith>
 
-  <Style Selector="controls|PlayerCard">
+  <Style Selector="templatedControls|PlayerCard">
     <!-- Set Defaults -->
     <Setter Property="Template">
       <ControlTemplate>
@@ -23,9 +24,9 @@
 							 Margin="15, 0, 10, 0"
 							 Width="15"/>
 				  <TextBox Text="{TemplateBinding PlayerName}"
-						   VerticalAlignment="Center"/>
-				  <Button Content="B"
-						  Padding="10"
+						   VerticalAlignment="Center"
+						   Width="120"/>
+				  <Button Padding="10"
 						  Background="Transparent"
 						  Command="{TemplateBinding Command}"
 						  CommandParameter="{TemplateBinding CommandParameter}">

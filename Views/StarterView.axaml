@@ -32,12 +32,10 @@
 				FontSize="20"
 				Width="150"
 				IsEnabled="{Binding Launchable}"
-				Command="{Binding ChangeMasterName}"
-				CommandParameter="{Binding .}">
+				Command="{Binding ChangeMasterName}">
 			<i:Interaction.Behaviors>
 				<iac:EventTriggerBehavior EventName="Click">
-					<iac:InvokeCommandAction Command="{Binding ParentVM.MoveNextCommand}"
-											 CommandParameter="{Binding .}"/>
+					<iac:InvokeCommandAction Command="{Binding ParentViewModel.MoveNextCommand}"/>
 				</iac:EventTriggerBehavior>
 			</i:Interaction.Behaviors>
 		</Button>

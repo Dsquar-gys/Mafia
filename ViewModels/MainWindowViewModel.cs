@@ -1,4 +1,5 @@
-﻿using Mafia.ViewModels.Commands;
+﻿using System;
+using System.Reactive;
 using ReactiveUI;
 
 namespace Mafia.ViewModels
@@ -7,49 +8,56 @@ namespace Mafia.ViewModels
     {
         #region Private Fields
 
-        private readonly Page[] _pages = new Page[] { new StarterViewModel(), new LobbyConfigViewModel() };
+        private readonly Page[] _pages = new Page[]{
+            new StarterViewModel(),
+            new LobbyConfigViewModel(),
+            new TeamsConfigViewModel()};
+        
         private Page _currentPage;
-        private int _pageIdex = 0;
+        private int _pageIndex;
 
         #endregion
 
         #region Properties
 
-        public static MainWindowViewModel Instance { get; private set; }
+        public static MainWindowViewModel? Instance { get; private set; }
         public Page CurrentPage
         {
             get => _currentPage;
             set => this.RaiseAndSetIfChanged(ref _currentPage, value);
         }
-
+        
+        public IObservable<bool> CanMoveForward { get; }
+        
+        public IObservable<bool> CanMoveBack { get; }
+        
         #endregion 
 
         public MainWindowViewModel()
         {
-            Instance = Instance ?? this;
+            Instance ??= this;
 
-            MoveNextCommand = new DelegateCommand(GetNextPage, OnCanMoveForward);
-            MovePreviousCommand = new DelegateCommand(GetPreviousPage, OnCanMoveBackward);
+            CanMoveForward = this.WhenAnyValue(
+                x => x._pageIndex, x => x._pages.Length,
+                (cur, len) => cur < len - 1);
+            CanMoveBack = this.WhenAnyValue(x => x._pageIndex,
+                index => index > 0);
 
-            CurrentPage = _pages[_pageIdex];
+            _currentPage = _pages[_pageIndex];
         }
 
         #region Commands
 
-        public DelegateCommand MoveNextCommand { get; }
-        public DelegateCommand MovePreviousCommand { get; }
+        public ReactiveCommand<Unit, Unit> MoveNextCommand => ReactiveCommand.Create(GetNextPage, CanMoveForward);
+        public ReactiveCommand<Unit, Unit> MoveBackCommand => ReactiveCommand.Create(GetPreviousPage, CanMoveBack);
 
         #endregion
 
         #region Command Methods
 
-        private void GetNextPage(object parameter) => CurrentPage = _pages[++_pageIdex];
+        private void GetNextPage() => CurrentPage = _pages[++_pageIndex];
 
-        private void GetPreviousPage(object parameter) => CurrentPage = _pages[--_pageIdex];
-
-        private bool OnCanMoveForward(object parameter) => _pageIdex < _pages.Length - 1;
-
-        private bool OnCanMoveBackward(object parameter) => _pageIdex > 0;
+        private void GetPreviousPage() => CurrentPage = _pages[--_pageIndex];
 
         #endregion
     }

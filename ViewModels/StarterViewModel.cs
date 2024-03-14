@@ -1,5 +1,5 @@
-﻿using Mafia.Models;
-using Mafia.ViewModels.Commands;
+﻿using System.Reactive;
+using Mafia.Models;
 using ReactiveUI;
 
 namespace Mafia.ViewModels
@@ -7,15 +7,7 @@ namespace Mafia.ViewModels
     public class StarterViewModel : Page
     {
         private string _masterName = Statistic.MasterNameProperty;
-        private bool _launchable = false;
-
-        public StarterViewModel() : base()
-        {
-            ChangeMasterName = new DelegateCommand(parameter =>
-            {
-                Statistic.DefineMaster(MasterName);
-            });
-        }
+        private bool _launchable;
 
         public string MasterName
         {
@@ -33,6 +25,9 @@ namespace Mafia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _launchable, value);
         }
 
-        public DelegateCommand ChangeMasterName { get; }
+        public ReactiveCommand<Unit, Unit> ChangeMasterName => ReactiveCommand.Create(() =>
+        {
+            Statistic.DefineMaster(MasterName);
+        });
     }
 }

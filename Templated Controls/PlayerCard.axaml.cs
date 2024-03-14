@@ -1,13 +1,15 @@
+using System;
+using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls.Primitives;
-using System.Windows.Input;
+using Mafia.Models;
 
-namespace Mafia;
+namespace Mafia.Templated_Controls;
 
 public class PlayerCard : TemplatedControl
 {
     public static readonly StyledProperty<string> PlayerNameProperty =
-        AvaloniaProperty.Register<PlayerCard, string>(nameof(PlayerName), "Крэк");
+        AvaloniaProperty.Register<PlayerCard, string>(nameof(PlayerName));
 
     public string PlayerName
     {
@@ -16,7 +18,7 @@ public class PlayerCard : TemplatedControl
     }
 
     public static readonly StyledProperty<int> PositionProperty =
-        AvaloniaProperty.Register<PlayerCard, int>(nameof(Position), 0);
+        AvaloniaProperty.Register<PlayerCard, int>(nameof(Position));
 
     public int Position
     {
@@ -30,25 +32,42 @@ public class PlayerCard : TemplatedControl
     public ICommand Command
     {
         get => this.GetValue(CommandProperty);
-        set => SetValue(CommandProperty, value);
+        init => SetValue(CommandProperty, value);
     }
-
+    
     public static readonly StyledProperty<object> CommandParameterProperty =
         AvaloniaProperty.Register<PlayerCard, object>(nameof(CommandParameter));
 
     public object CommandParameter
     {
         get => this.GetValue(CommandParameterProperty);
-        set => SetValue(CommandParameterProperty, value);
+        init => SetValue(CommandParameterProperty, value);
     }
 
-    public PlayerCard(int position, string name, ICommand command, object parameter = null)
+    /// <summary>
+    /// Main constructor
+    /// </summary>
+    /// <param name="position">Player position in queue</param>
+    /// <param name="onRemoveCommand">Command for removal button click</param>
+    public PlayerCard(int position, ICommand onRemoveCommand)
     {
         Position = position;
-        Name = name;
-        Command = command;
-        CommandParameter = parameter ?? this;
+        Command = onRemoveCommand;
+        CommandParameter = this;
+        PlayerName = GetRandomName().ToString();
     }
 
-    public PlayerCard() { }
+    /// <summary>
+    /// Constructor for design preview
+    /// </summary>
+    public PlayerCard() => PlayerName = GetRandomName().ToString();
+
+    // Default name for player card
+    private static DefaultName GetRandomName()
+    {
+        Random random = new();
+        var amount = Enum.GetNames(typeof(DefaultName)).Length;
+        var s = random.Next(amount);
+        return (DefaultName)s;
+    }
 }

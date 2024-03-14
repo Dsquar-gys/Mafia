@@ -1,43 +1,39 @@
 ﻿using Mafia.Models;
-using Mafia.ViewModels.Commands;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Reactive;
+using Mafia.Templated_Controls;
+using ReactiveUI;
 
 namespace Mafia.ViewModels
 {
     public class LobbyConfigViewModel : Page
     {
-        private int _indexer = 0;
-        public ObservableCollection<PlayerCard> Players { get; }
-        public LobbyConfigViewModel() : base()
-        {
-            Players = new ObservableCollection<PlayerCard>();
-
-            RemovePlayerCommand = new DelegateCommand(parameter =>
-            {
-                Players.Remove(parameter as PlayerCard);
-                _indexer--;
-                int tempIndexer = 0;
-                foreach (PlayerCard playerCard in Players)
-                    playerCard.Position = ++tempIndexer;
-            });
-
-            AddPlayerCommand = new DelegateCommand(parameter =>
-            {
-                Players.Add(new PlayerCard(++_indexer, "Player", RemovePlayerCommand));
-            });
-
-            CommitPlayersCommand = new DelegateCommand(parameter =>
-            {
-                Statistic.Players = new List<PlayerCard>(Players);
-            });
-        }
+        private int _indexer;
+        public ObservableCollection<PlayerCard> Players { get; } = new();
 
         #region Commands
 
-        public DelegateCommand AddPlayerCommand { get; }
-        public DelegateCommand RemovePlayerCommand { get; }
-        public DelegateCommand CommitPlayersCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddPlayerCommand => ReactiveCommand.Create(() =>
+        {
+            Players.Add(new PlayerCard(++_indexer, RemovePlayerCommand));
+        });
+
+        public ReactiveCommand<PlayerCard, Unit> RemovePlayerCommand => ReactiveCommand.Create<PlayerCard>(player =>
+        {
+            Players.Remove(player);
+            _indexer--;
+            var tempIndexer = 0;
+            foreach (var playerCard in Players)
+                playerCard.Position = ++tempIndexer;
+        });
+
+        public ReactiveCommand<Unit, Unit> CommitPlayersCommand => ReactiveCommand.Create(() =>
+        {
+            Statistic.Players.Edit(innerCollection =>
+            {
+                innerCollection.Load(Players);
+            });
+        });
 
         #endregion
     }

@@ -37,8 +37,7 @@
 				<Button Content="Change Master">
 					<i:Interaction.Behaviors>
 						<iac:EventTriggerBehavior EventName="Click">
-							<iac:InvokeCommandAction Command="{Binding ParentVM.MovePreviousCommand}"
-													 CommandParameter="{Binding .}"/>
+							<iac:InvokeCommandAction Command="{Binding ParentViewModel.MoveBackCommand}"/>
 						</iac:EventTriggerBehavior>
 					</i:Interaction.Behaviors>
 				</Button>
@@ -48,11 +47,10 @@
 					Command="{Binding AddPlayerCommand}"/>
 			<Button Grid.Column="2"
 					Content="Next"
-					Command="{Binding CommitPlayersCommand}">
+					Command="{Binding ParentViewModel.MoveNextCommand}">
 				<i:Interaction.Behaviors>
 					<iac:EventTriggerBehavior EventName="Click">
-						<iac:InvokeCommandAction Command="{Binding ParentVM.MoveNextCommand}"
-												 CommandParameter="{Binding .}"/>
+						<iac:InvokeCommandAction Command="{Binding CommitPlayersCommand}"/>
 					</iac:EventTriggerBehavior>
 				</i:Interaction.Behaviors>
 			</Button>
@@ -71,7 +69,7 @@
 							<WrapPanel />
 						</ItemsPanelTemplate>
 					</ItemsControl.ItemsPanel>
-
+					
 				</ItemsControl>
 			</ScrollViewer>
 		</Border>

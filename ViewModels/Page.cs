@@ -2,7 +2,6 @@
 {
     public abstract class Page : ViewModelBase
     {
-        public MainWindowViewModel ParentVM { get; }
-        public Page() => ParentVM = MainWindowViewModel.Instance;
+        public MainWindowViewModel ParentViewModel { get; } = MainWindowViewModel.Instance!;
     }
 }
