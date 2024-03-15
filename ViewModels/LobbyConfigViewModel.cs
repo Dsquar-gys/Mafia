@@ -1,7 +1,6 @@
 ﻿using Mafia.Models;
 using System.Collections.ObjectModel;
 using System.Reactive;
-using Mafia.Templated_Controls;
 using ReactiveUI;
 
 namespace Mafia.ViewModels
@@ -16,7 +15,7 @@ namespace Mafia.ViewModels
         
         #region Properties
         
-        public ObservableCollection<PlayerCard> Players { get; } = new();
+        public ObservableCollection<Player> Players { get; } = new();
         
         #endregion
 
@@ -24,23 +23,23 @@ namespace Mafia.ViewModels
 
         public ReactiveCommand<Unit, Unit> AddPlayerCommand => ReactiveCommand.Create(() =>
         {
-            Players.Add(new PlayerCard(++_indexer, RemovePlayerCommand));
+            Players.Add(new Player(++_indexer));
         });
-
-        public ReactiveCommand<PlayerCard, Unit> RemovePlayerCommand => ReactiveCommand.Create<PlayerCard>(player =>
+        public ReactiveCommand<Player, Unit> RemovePlayerCommand => ReactiveCommand.Create<Player>(player =>
         {
             Players.Remove(player);
             _indexer--;
             var tempIndexer = 0;
-            foreach (var playerCard in Players)
-                playerCard.Position = ++tempIndexer;
+            foreach (var exPlayer in Players)
+                exPlayer.UpdatePosition(++tempIndexer);
         });
 
         public ReactiveCommand<Unit, Unit> CommitPlayersCommand => ReactiveCommand.Create(() =>
         {
-            Statistic.Players.Edit(innerCollection =>
+            Statistic.Players.Edit(innerList =>
             {
-                innerCollection.Load(Players);
+                innerList.Clear();
+                innerList.AddRange(Players);
             });
         });
 

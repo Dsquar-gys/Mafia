@@ -5,6 +5,8 @@
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
 			 xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
 			 xmlns:vm="using:Mafia.ViewModels"
+             xmlns:v="using:Mafia.Views"
+             xmlns:tc="using:Mafia.Templated_Controls"
              xmlns:models="using:Mafia.Models"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Mafia.Views.LobbyConfigView"
@@ -67,6 +69,15 @@
 						</ItemsPanelTemplate>
 					</ItemsControl.ItemsPanel>
 					
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+							<tc:PlayerCard Player="{Binding .}"
+							               Command="{Binding $parent[v:LobbyConfigView].((vm:LobbyConfigViewModel)DataContext).RemovePlayerCommand}"
+							               CommandParameter="{Binding .}"/>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+					
 				</ItemsControl>
 			</ScrollViewer>
 		</Border>
@@ -79,4 +90,7 @@
 		</Grid.Styles>
 		
 	</Grid>
+	
+	
+	
 </UserControl>

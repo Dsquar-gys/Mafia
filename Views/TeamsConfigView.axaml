@@ -60,7 +60,7 @@
                     
                     <ScrollViewer VerticalScrollBarVisibility="Auto"
                                   HorizontalScrollBarVisibility="Disabled">
-                        <ListBox ItemsSource="{Binding TransparentPlayers}"/>
+                        <ItemsControl ItemsSource="{Binding TransparentPlayers}"/>
                     </ScrollViewer>
                     
                 </Border>

@@ -19,11 +19,13 @@
 				  Background="White"
 				  Margin="10">
 			  <StackPanel Orientation="Horizontal">
-				  <TextBlock Text="{TemplateBinding Position, Converter={StaticResource IntegerConverter}}"
+				  <TextBlock Text="{Binding Player.Number, Converter={StaticResource IntegerConverter},
+										RelativeSource={RelativeSource TemplatedParent}}"
 							 VerticalAlignment="Center"
 							 Margin="15, 0, 10, 0"
 							 Width="15"/>
-				  <TextBox Text="{TemplateBinding PlayerName}"
+				  <TextBox Text="{Binding Player.Nickname,
+										RelativeSource={RelativeSource TemplatedParent}}"
 						   VerticalAlignment="Center"
 						   Width="120"/>
 				  <Button Padding="10"
