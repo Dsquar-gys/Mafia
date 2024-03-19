@@ -7,6 +7,7 @@ public class Player : ReactiveObject
 {
     private int _number;
     private string _nickname;
+    private GameRole _role;
 
     public int Number
     {
@@ -20,13 +21,21 @@ public class Player : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _nickname, value);
     }
 
+    public GameRole Role
+    {
+        get => _role;
+        set => this.RaiseAndSetIfChanged(ref _role, value);
+    }
+
     public Player(int position, string? name = null)
     {
         _number = position;
         _nickname = name ?? GetRandomName().ToString();
+        _role = GameRole.None;
     }
 
     public void UpdatePosition(int newPos) => Number = newPos;
+    public void UpdateRole(GameRole newRole) => Role = newRole;
     
     private static DefaultName GetRandomName()
     {

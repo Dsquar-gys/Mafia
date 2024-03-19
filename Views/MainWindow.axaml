@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-		d:DesignWidth="800" MinWidth="535"
+		d:DesignWidth="800" MinWidth="600"
 		d:DesignHeight="450" MinHeight="300"
         x:Class="Mafia.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
