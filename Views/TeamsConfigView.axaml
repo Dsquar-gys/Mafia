@@ -106,7 +106,7 @@
                 
                 <!-- Reds -->
                 <Border Grid.Column="2"
-                        Background="Indigo"
+                        Background="RoyalBlue"
                         Padding="10"
                         Name="FloPPa">
                     
@@ -145,7 +145,7 @@
                 
                 <!-- Blacks -->
                 <Border Grid.Column="4"
-                        Background="Plum"
+                        Background="RoyalBlue"
                         Padding="10">
                     
                     <ScrollViewer VerticalScrollBarVisibility="Auto"

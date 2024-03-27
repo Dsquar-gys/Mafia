@@ -50,27 +50,31 @@ public class TeamsConfigViewModel : Page
 
         var destination = GetDestinationList(destinationListName);
 
-        if (destination is null)
+        if (destination.collection is null)
         {
             Console.WriteLine($"Invalid drop location '{destinationListName}'");
             return;
         }
 
         sourceList.Remove(item);
-        //item.UpdateRole(destination.Role);
-        destination.Add(item);
+        destination.collection!.Add(item);
+        item.UpdateRole(destination.role);
         Console.WriteLine($"Changing '{player.Nickname}''s role to '{item.Role}'");
     }
     
     public bool IsDestinationValid(string? destinationName)
     {
         var destination = GetDestinationList(destinationName);
-        return destination is not null;
+        return destination.collection is not null;
     }
     
     private void CountChanged()
     { // Check if Statistic.Players changes at all !!
         TransparentPlayers.Clear();
+        
+        foreach (var player in Statistic.Players.Items)
+            player.UpdateRole(GameRole.None);
+        
         TransparentPlayers.AddRange(Statistic.Players.Items);
         BlackPlayers.Clear();
         RedPlayers.Clear();
@@ -89,14 +93,14 @@ public class TeamsConfigViewModel : Page
         };
     }
     
-    private ObservableCollection<Player>? GetDestinationList(string? listName)
+    private (ObservableCollection<Player>? collection, GameRole role) GetDestinationList(string? listName)
     {
         return listName switch
         {
-            "WhiteCollection" => TransparentPlayers,
-            "RedCollection" => RedPlayers,
-            "BlackCollection" => BlackPlayers,
-            _ => null
+            "WhiteCollection" => (TransparentPlayers, GameRole.None),
+            "RedCollection" => (RedPlayers, GameRole.Peasant),
+            "BlackCollection" => (BlackPlayers, GameRole.Mafia),
+            _ => (null, GameRole.None)
         };
     }
 }
