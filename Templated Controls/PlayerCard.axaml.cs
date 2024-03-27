@@ -37,5 +37,5 @@ public class PlayerCard : TemplatedControl
     /// <summary>
     /// Constructor for design preview
     /// </summary>
-    public PlayerCard() => Player = new Player(0);
+    public PlayerCard() => Player = new Player(0, "Example");
 }

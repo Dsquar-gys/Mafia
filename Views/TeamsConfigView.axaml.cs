@@ -62,8 +62,8 @@ public partial class TeamsConfigView : UserControl
         e.DragEffects = DragDropEffects.Move;
         if (DataContext is not TeamsConfigViewModel vm) return;
         var data = e.Data.Get(TeamsConfigViewModel.CustomFormat);
-        if (data is not Player player) return;
-        if (!vm.IsDestinationValid(player, (e.Source as Control)?.Name))
+        if (data is not Player) return;
+        if (!vm.IsDestinationValid((e.Source as Control)?.Name))
             e.DragEffects = DragDropEffects.None;
     }
 

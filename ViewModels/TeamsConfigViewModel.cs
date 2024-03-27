@@ -37,30 +37,6 @@ public class TeamsConfigViewModel : Page
     }
 
     public void StartDrag(Player player) => DraggingPlayer = player;
-
-    /*public void Drop(Player player, string? destinationListName)
-    {
-        var sourceList = GetSourceList(player.Role);
-        var item = sourceList.SingleOrDefault(p => p.Nickname == player.Nickname);
-        if (item is null)
-        {
-            Console.WriteLine($"Player with nickname '{player.Nickname}' not found");
-            return;
-        }
-
-        var destination = GetDestinationList(player.Role);
-
-        if (destination.ListName != destinationListName)
-        {
-            Console.WriteLine($"Invalid drop location '{destinationListName}'. Valid location is {destination.ListName}");
-            return;
-        }
-
-        sourceList.Remove(item);
-        item.UpdateRole(destination.Role);
-        destination.List.Add(item);
-        Console.WriteLine($"Changing '{player.Nickname}''s role to '{item.Role}'");
-    }*/
     
     public void Drop(Player player, string? destinationListName)
     {
@@ -86,7 +62,7 @@ public class TeamsConfigViewModel : Page
         Console.WriteLine($"Changing '{player.Nickname}''s role to '{item.Role}'");
     }
     
-    public bool IsDestinationValid(Player player, string? destinationName)
+    public bool IsDestinationValid(string? destinationName)
     {
         var destination = GetDestinationList(destinationName);
         return destination is not null;
@@ -106,7 +82,9 @@ public class TeamsConfigViewModel : Page
         {
             GameRole.None => TransparentPlayers,
             GameRole.Peasant => RedPlayers,
+            GameRole.Detective => RedPlayers,
             GameRole.Mafia => BlackPlayers,
+            GameRole.Donna => BlackPlayers,
             _ => throw new ArgumentOutOfRangeException(nameof(role), role, null)
         };
     }

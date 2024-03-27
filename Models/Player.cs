@@ -27,21 +27,13 @@ public class Player : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _role, value);
     }
 
-    public Player(int position, string? name = null)
+    public Player(int position, string name)
     {
         _number = position;
-        _nickname = name ?? GetRandomName().ToString();
+        _nickname = name;
         _role = GameRole.None;
     }
 
     public void UpdatePosition(int newPos) => Number = newPos;
     public void UpdateRole(GameRole newRole) => Role = newRole;
-    
-    private static DefaultName GetRandomName()
-    {
-        Random random = new();
-        var amount = Enum.GetNames(typeof(DefaultName)).Length;
-        var s = random.Next(amount);
-        return (DefaultName)s;
-    }
 }

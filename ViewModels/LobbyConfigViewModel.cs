@@ -1,5 +1,7 @@
-﻿using Mafia.Models;
+﻿using System;
+using Mafia.Models;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive;
 using ReactiveUI;
 
@@ -16,6 +18,29 @@ namespace Mafia.ViewModels
         #region Properties
         
         public ObservableCollection<Player> Players { get; } = new();
+        private string GetRandomName
+        {
+            get
+            {
+                Random random = new();
+
+                var existing = Players.Select(x => x.Nickname).ToArray();
+                var total = Enum.GetNames(typeof(DefaultName));
+
+                var rest = total.Except(existing).ToArray();
+                
+                var s = random.Next(rest.Length);
+                try
+                {
+                    return rest[s];
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    Console.WriteLine("Out of default names...");
+                    return "NickName";
+                }
+            }
+        }
         
         #endregion
 
@@ -23,7 +48,7 @@ namespace Mafia.ViewModels
 
         public ReactiveCommand<Unit, Unit> AddPlayerCommand => ReactiveCommand.Create(() =>
         {
-            Players.Add(new Player(++_indexer));
+            Players.Add(new Player(++_indexer, GetRandomName));
         });
         public ReactiveCommand<Player, Unit> RemovePlayerCommand => ReactiveCommand.Create<Player>(player =>
         {
