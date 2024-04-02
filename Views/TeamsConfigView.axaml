@@ -122,11 +122,32 @@
                                             Padding="10"
                                             CornerRadius="10"
                                             PointerPressed="OnPointerPressed">
-                                        <Grid ColumnDefinitions="*, *">
+                                        <Grid ColumnDefinitions="*, Auto, *">
                                             <TextBlock Grid.Column="0"
                                                        Text="{Binding Number, Converter={StaticResource IntegerConverter}}"
                                                        Margin="8,0"/>
-                                            <TextBlock Grid.Column="1"
+                                            <RadioButton Grid.Column="1"
+                                                         VerticalAlignment="Center"
+                                                         Theme="{DynamicResource ButtonRadioButton}"
+                                                         Content="Detective"
+                                                         IsChecked="False"
+                                                         GroupName="DetectiveDefinition">
+                                                
+                                                <i:Interaction.Behaviors>
+                                                    <iac:EventTriggerBehavior EventName="Checked">
+                                                        <iac:ChangePropertyAction TargetObject="{Binding $parent[UserControl].DataContext}"
+                                                                                  PropertyName="Detective"
+                                                                                  Value="{Binding .}"/>
+                                                    </iac:EventTriggerBehavior>
+                                                </i:Interaction.Behaviors>
+                                                
+                                                <RadioButton.Styles>
+                                                    <Style Selector="RadioButton:checked">
+                                                        <Setter Property="Foreground" Value="RoyalBlue"/>
+                                                    </Style>
+                                                </RadioButton.Styles>
+                                            </RadioButton>
+                                            <TextBlock Grid.Column="2"
                                                        Text="{Binding Nickname}"
                                                        HorizontalAlignment="Center"/>
                                         </Grid>
@@ -160,11 +181,35 @@
                                             Padding="10"
                                             CornerRadius="10"
                                             PointerPressed="OnPointerPressed">
-                                        <Grid ColumnDefinitions="*, *">
+                                        <Grid ColumnDefinitions="*, auto *">
                                             <TextBlock Grid.Column="0"
+                                                       VerticalAlignment="Center"
                                                        Text="{Binding Number, Converter={StaticResource IntegerConverter}}"
                                                        Margin="8,0"/>
-                                            <TextBlock Grid.Column="1"
+                                            <RadioButton Grid.Column="1"
+                                                         VerticalAlignment="Center"
+                                                         Theme="{DynamicResource ButtonRadioButton}"
+                                                         Content="Don"
+                                                         IsChecked="False"
+                                                         GroupName="DonDefinition">
+                                                
+                                                <i:Interaction.Behaviors>
+                                                    <iac:EventTriggerBehavior EventName="Checked">
+                                                        <iac:ChangePropertyAction TargetObject="{Binding $parent[UserControl].DataContext}"
+                                                            PropertyName="Don"
+                                                            Value="{Binding .}"/>
+                                                    </iac:EventTriggerBehavior>
+                                                </i:Interaction.Behaviors>
+                                                
+                                                <RadioButton.Styles>
+                                                    <Style Selector="RadioButton:checked">
+                                                        <Setter Property="Foreground" Value="DarkRed"/>
+                                                    </Style>
+                                                </RadioButton.Styles>
+                                                
+                                            </RadioButton>
+                                            <TextBlock Grid.Column="2"
+                                                       VerticalAlignment="Center"
                                                        Text="{Binding Nickname}"
                                                        HorizontalAlignment="Center"/>
                                         </Grid>

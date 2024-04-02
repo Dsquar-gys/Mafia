@@ -3,6 +3,7 @@ using Mafia.Models;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
+using DynamicData.Binding;
 using ReactiveUI;
 
 namespace Mafia.ViewModels
@@ -43,7 +44,7 @@ namespace Mafia.ViewModels
         }
         
         #endregion
-
+        
         #region Commands
 
         public ReactiveCommand<Unit, Unit> AddPlayerCommand => ReactiveCommand.Create(() =>

@@ -6,5 +6,5 @@ public enum GameRole
     Peasant,
     Detective,
     Mafia,
-    Donna,
+    Don,
 }

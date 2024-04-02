@@ -10,20 +10,41 @@ namespace Mafia.ViewModels;
 
 public class TeamsConfigViewModel : Page
 {
-    private int _playersAmount = 0;
-    private Player? _draggingPlayer;
-
     public const string CustomFormat = "player-format";
     
-    public ObservableCollection<Player> TransparentPlayers { get; private set; } = new();
-    public ObservableCollection<Player> BlackPlayers { get; private set; } = new();
-    public ObservableCollection<Player> RedPlayers { get; private set; } = new();
+    #region Private fields
+    
+    private Player? _draggingPlayer;
+    private Player? _don;
+    private Player? _detective;
+    
+    #endregion
+    
+    #region Properties
+    
+    public ObservableCollection<Player> TransparentPlayers { get; } = new();
+    public ObservableCollection<Player> BlackPlayers { get; } = new();
+    public ObservableCollection<Player> RedPlayers { get; } = new();
 
     public Player? DraggingPlayer
     {
         get => _draggingPlayer;
-        set => this.RaiseAndSetIfChanged(ref _draggingPlayer, value);
+        private set => this.RaiseAndSetIfChanged(ref _draggingPlayer, value);
     }
+
+    public Player? Don
+    {
+        get => _don;
+        set => this.RaiseAndSetIfChanged(ref _don, value);
+    }
+    
+    public Player? Detective
+    {
+        get => _detective;
+        set => this.RaiseAndSetIfChanged(ref _detective, value);
+    }
+    
+    #endregion
 
     public TeamsConfigViewModel()
     { // Remember about player NICKNAME CHANGE
@@ -88,7 +109,7 @@ public class TeamsConfigViewModel : Page
             GameRole.Peasant => RedPlayers,
             GameRole.Detective => RedPlayers,
             GameRole.Mafia => BlackPlayers,
-            GameRole.Donna => BlackPlayers,
+            GameRole.Don => BlackPlayers,
             _ => throw new ArgumentOutOfRangeException(nameof(role), role, null)
         };
     }
