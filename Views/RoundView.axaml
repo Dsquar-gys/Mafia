@@ -1,0 +1,59 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Mafia.ViewModels"
+             xmlns:models="using:Mafia.Models"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Mafia.Views.RoundView"
+             x:DataType="vm:TeamsConfigViewModel">
+    
+    <Design.DataContext>
+        <vm:RoundViewModel />
+    </Design.DataContext>
+    
+    <Grid RowDefinitions="Auto, *">
+		
+		<!-- Header -->
+		<Grid Grid.Row="0"
+			  ColumnDefinitions="*,*,*"
+			  Margin="15">
+			<StackPanel Grid.Column="0"
+						Orientation="Horizontal"
+						Spacing="20">
+				<Border Padding="5"
+				        Background="RoyalBlue"
+				        CornerRadius="5">
+					<ScrollViewer HorizontalScrollBarVisibility="Hidden"
+					              MaxWidth="200">
+						<TextBlock Name="MasterNameDisplay"
+						           VerticalAlignment="Center"
+						           Foreground="White"
+						           Text="{Binding Source={x:Static models:Statistic.MasterNameProperty}}"/>
+					</ScrollViewer>
+				</Border>
+			</StackPanel>
+			<Label Grid.Column="1"
+			       HorizontalAlignment="Center">Round</Label>
+		</Grid>
+		
+		<!-- Body -->
+		<Border Grid.Row="1"
+				Background="RoyalBlue">
+			<ScrollViewer VerticalScrollBarVisibility="Auto">
+				
+			</ScrollViewer>
+		</Border>
+
+		<!-- Styles -->
+		<Grid.Styles>
+			<Style Selector="Button">
+				<Setter Property="HorizontalAlignment" Value="Center" />
+			</Style>
+		</Grid.Styles>
+		
+	</Grid>
+    
+</UserControl>

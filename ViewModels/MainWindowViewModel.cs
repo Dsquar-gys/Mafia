@@ -34,10 +34,12 @@ namespace Mafia.ViewModels
         {
             Instance ??= this;
             
-            _pages = new Page[]{
+            _pages = new Page[]
+            {
                 new StarterViewModel(),
                 new LobbyConfigViewModel(),
-                new TeamsConfigViewModel()};
+                new TeamsConfigViewModel()
+            };
 
             CanMoveForward = this.WhenAnyValue(
                 x => x._pageIndex, x => x._pages.Length,
