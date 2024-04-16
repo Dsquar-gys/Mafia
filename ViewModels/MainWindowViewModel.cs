@@ -38,7 +38,8 @@ namespace Mafia.ViewModels
             {
                 new StarterViewModel(),
                 new LobbyConfigViewModel(),
-                new TeamsConfigViewModel()
+                new TeamsConfigViewModel(),
+                new RoundViewModel()
             };
 
             CanMoveForward = this.WhenAnyValue(

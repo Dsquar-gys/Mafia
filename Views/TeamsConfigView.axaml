@@ -50,7 +50,6 @@
                 Name="DragContainer"
                 DragDrop.AllowDrop="True">
             
-            <!-- TODO -->
             <Grid>
                 
                 <Grid.ColumnDefinitions>

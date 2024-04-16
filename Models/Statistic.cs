@@ -9,9 +9,10 @@ namespace Mafia.Models
     {
         #region For Statistic
 
-        //public static SourceList<PlayerCard> Players { get; } = new();
         public static SourceList<Player> Players { get; } = new();
         public static string MasterNameProperty { get; private set; } = "";
+        
+        // TODO В статистике должна быть информация о красных и чёрных
         
         #endregion
         
