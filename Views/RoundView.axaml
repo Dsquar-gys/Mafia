@@ -2,6 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              xmlns:vm="using:Mafia.ViewModels"
              xmlns:models="using:Mafia.Models"
              mc:Ignorable="d"
@@ -58,7 +60,14 @@
 				<ListBox Grid.Column="0"
 				         ItemsSource="{Binding Players}"
 				         Background="Transparent"
-				         SelectedValue="{Binding CurrentPlayer}">
+				         SelectedValue="{Binding CurrentPlayer, Mode=OneWay}">
+					
+					<i:Interaction.Behaviors>
+						<iac:EventTriggerBehavior EventName="SelectionChanged">
+							<iac:ChangePropertyAction PropertyName="SelectedValue"
+							                          Value="{Binding CurrentPlayer}"/>
+						</iac:EventTriggerBehavior>
+					</i:Interaction.Behaviors>
 					
 					<ListBox.ItemTemplate>
 						<DataTemplate>
