@@ -34,6 +34,8 @@ public class Player : ReactiveObject
         _role = GameRole.None;
     }
 
+    public bool IsActiveRole => _role is GameRole.Detective or GameRole.Don;
+
     public void UpdatePosition(int newPos) => Number = newPos;
     public void UpdateRole(GameRole newRole) => Role = newRole;
 }

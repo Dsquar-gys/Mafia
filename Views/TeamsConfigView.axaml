@@ -29,15 +29,20 @@
                         Command="{Binding Source={x:Static vm:MainWindowViewModel.Instance},
                             Path=MoveBackCommand}" />
             </StackPanel>
-            <Border Grid.Column="1"
-                    Padding="5"
-                    Background="RoyalBlue"
-                    CornerRadius="5">
-                <TextBlock Text="Manage Teams"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Foreground="White"/>
-            </Border>
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal"
+                        Spacing="10">
+                <Border Padding="35,5"
+                        Background="RoyalBlue"
+                        CornerRadius="5">
+                    <TextBlock Text="Manage Teams"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Foreground="White"/>
+                </Border>
+                <Button Content="Shuffle"
+                        Command="{Binding ShuffleCommand}"/>
+            </StackPanel>
             <Button Grid.Column="2"
                     Content="Next"
                     Command="{Binding Source={x:Static vm:MainWindowViewModel.Instance},
@@ -129,7 +134,7 @@
                                                          VerticalAlignment="Center"
                                                          Theme="{DynamicResource ButtonRadioButton}"
                                                          Content="Detective"
-                                                         IsChecked="False"
+                                                         IsChecked="{Binding IsActiveRole}"
                                                          GroupName="DetectiveDefinition">
                                                 
                                                 <i:Interaction.Behaviors>
@@ -189,7 +194,7 @@
                                                          VerticalAlignment="Center"
                                                          Theme="{DynamicResource ButtonRadioButton}"
                                                          Content="Don"
-                                                         IsChecked="False"
+                                                         IsChecked="{Binding IsActiveRole}"
                                                          GroupName="DonDefinition">
                                                 
                                                 <i:Interaction.Behaviors>

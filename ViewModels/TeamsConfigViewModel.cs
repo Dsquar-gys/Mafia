@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive;
 using DynamicData;
 using Mafia.Models;
 using ReactiveUI;
@@ -17,6 +19,8 @@ public class TeamsConfigViewModel : Page
     private Player? _draggingPlayer;
     private Player? _don;
     private Player? _detective;
+
+    private Random _random = new();
     
     #endregion
     
@@ -57,6 +61,31 @@ public class TeamsConfigViewModel : Page
             });
     }
 
+    public ReactiveCommand<Unit, Unit> ShuffleCommand => ReactiveCommand.Create(() =>
+    {
+        var playerPool = new List<Player>(TransparentPlayers.Concat(RedPlayers).Concat(BlackPlayers));
+        TransparentPlayers.Clear();
+        RedPlayers.Clear();
+        BlackPlayers.Clear();
+
+        // Counting amount of mafia players
+        var mafias = Math.Round(playerPool.Count / (_random.NextSingle() + 3));
+        
+        playerPool.Shuffle();
+        
+        BlackPlayers.AddRange(playerPool.Take((int)mafias));
+        RedPlayers.AddRange(playerPool.Skip((int)mafias));
+        
+        // Reset roles
+        foreach (var blackPlayer in BlackPlayers)
+            blackPlayer.UpdateRole(GameRole.Mafia);
+        foreach (var redPlayer in RedPlayers)
+            redPlayer.UpdateRole(GameRole.Peasant);
+        
+        BlackPlayers[0].UpdateRole(GameRole.Don);
+        RedPlayers[0].UpdateRole(GameRole.Detective);
+    });
+    
     public void StartDrag(Player player) => DraggingPlayer = player;
     
     public void Drop(Player player, string? destinationListName)
