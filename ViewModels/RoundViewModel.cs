@@ -91,4 +91,15 @@ public class RoundViewModel : Page
         Paused ^= true;
         if (!Paused && Seconds >= 60) Seconds = 0;
     });
+    
+    //TODO EndSessionCommand
+    public ReactiveCommand<Unit, Unit> EndSessionCommand =>
+        ReactiveCommand.Create(() =>
+        {
+            Statistic.CreateReport();
+            
+            MainWindowViewModel.Instance!.ResetSession();
+        });
+
+    internal override void ResetPage() { }
 }

@@ -8,7 +8,7 @@ namespace Mafia.ViewModels
     {
         #region Private fields
         
-        private string _masterName = "";
+        private string _masterName = string.Empty;
         private bool _launchable;
         
         #endregion
@@ -41,5 +41,7 @@ namespace Mafia.ViewModels
         });
 
         #endregion
+
+        internal override void ResetPage() => MasterName = string.Empty;
     }
 }

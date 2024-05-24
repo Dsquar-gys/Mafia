@@ -45,6 +45,7 @@
             </StackPanel>
             <Button Grid.Column="2"
                     Content="Next"
+                    IsEnabled="{Binding ReadyForward}"
                     Command="{Binding Source={x:Static vm:MainWindowViewModel.Instance},
                         Path=MoveNextCommand}" />
         </Grid>

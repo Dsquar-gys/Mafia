@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reactive;
+using Mafia.Models;
 using ReactiveUI;
 
 namespace Mafia.ViewModels
@@ -62,9 +63,27 @@ namespace Mafia.ViewModels
         #region Command Methods
 
         private void GetNextPage() => CurrentPage = _pages[++_pageIndex];
-
         private void GetPreviousPage() => CurrentPage = _pages[--_pageIndex];
 
         #endregion
+
+        private void SetPage(ImportantPage page)
+        {
+            var pageIndex = (int)page;
+            if (pageIndex >= 0 && pageIndex < _pages.Length)
+            {
+                _pageIndex = pageIndex;
+                CurrentPage = _pages[_pageIndex];
+            }
+            else throw new IndexOutOfRangeException("Wrong page index...");
+        }
+
+        public void ResetSession()
+        {
+            foreach (var page in _pages)
+                page.ResetPage();
+            
+            SetPage(ImportantPage.StartingPage);
+        }
     }
 }

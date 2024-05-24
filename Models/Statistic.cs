@@ -20,5 +20,10 @@ namespace Mafia.Models
         {
             MasterNameProperty = name;
         }
+
+        public static void CreateReport()
+        {
+            //TODO
+        }
     }
 }

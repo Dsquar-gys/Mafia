@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using DynamicData;
+using DynamicData.Binding;
 using Mafia.Models;
 using ReactiveUI;
 using Console = System.Console;
@@ -17,10 +18,10 @@ public class TeamsConfigViewModel : Page
     #region Private fields
     
     private Player? _draggingPlayer;
-    private Player? _don;
-    private Player? _detective;
 
     private Random _random = new();
+
+    private bool _readyForward;
     
     #endregion
     
@@ -36,16 +37,10 @@ public class TeamsConfigViewModel : Page
         private set => this.RaiseAndSetIfChanged(ref _draggingPlayer, value);
     }
 
-    public Player? Don
+    public bool ReadyForward
     {
-        get => _don;
-        set => this.RaiseAndSetIfChanged(ref _don, value);
-    }
-    
-    public Player? Detective
-    {
-        get => _detective;
-        set => this.RaiseAndSetIfChanged(ref _detective, value);
+        get => _readyForward;
+        set => this.RaiseAndSetIfChanged(ref _readyForward, value);
     }
     
     #endregion
@@ -59,6 +54,9 @@ public class TeamsConfigViewModel : Page
                 Console.WriteLine("Amount of players changed to {0}", x);
                 CountChanged();
             });
+
+        TransparentPlayers.WhenPropertyChanged(x => x.Count)
+            .Subscribe(x => ReadyForward = x.Value == 0);
     }
 
     public ReactiveCommand<Unit, Unit> ShuffleCommand => ReactiveCommand.Create(() =>
@@ -152,5 +150,12 @@ public class TeamsConfigViewModel : Page
             "BlackCollection" => (BlackPlayers, GameRole.Mafia),
             _ => (null, GameRole.None)
         };
+    }
+
+    internal override void ResetPage()
+    {
+        TransparentPlayers.Clear();
+        RedPlayers.Clear();
+        BlackPlayers.Clear();
     }
 }

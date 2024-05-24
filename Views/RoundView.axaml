@@ -22,9 +22,10 @@
 		<Grid Grid.Row="0"
 			  ColumnDefinitions="*,*,*"
 			  Margin="15">
+			
 			<StackPanel Grid.Column="0"
-						Orientation="Horizontal"
-						Spacing="20">
+			            Orientation="Horizontal"
+			            Spacing="20">
 				<Border Padding="5"
 				        Background="RoyalBlue"
 				        CornerRadius="5">
@@ -37,8 +38,14 @@
 					</ScrollViewer>
 				</Border>
 			</StackPanel>
+			
 			<Label Grid.Column="1"
 			       HorizontalAlignment="Center">Round</Label>
+			
+			<Button Grid.Column="2"
+			        Content="End session"
+			        Command="{Binding EndSessionCommand}"/>
+			
 		</Grid>
 		
 		<!-- Body -->

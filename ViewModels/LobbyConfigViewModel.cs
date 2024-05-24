@@ -13,6 +13,7 @@ namespace Mafia.ViewModels
         #region Private fields
         
         private int _indexer;
+        private bool _readyForward;
         
         #endregion
         
@@ -43,7 +44,19 @@ namespace Mafia.ViewModels
             }
         }
         
+        public bool ReadyForward
+        {
+            get => _readyForward;
+            set => this.RaiseAndSetIfChanged(ref _readyForward, value);
+        }
+        
         #endregion
+
+        public LobbyConfigViewModel()
+        {
+            Players.WhenPropertyChanged(x => x.Count)
+                .Subscribe(x => ReadyForward = x.Value >= 6);
+        }
         
         #region Commands
 
@@ -70,5 +83,11 @@ namespace Mafia.ViewModels
         });
 
         #endregion
+
+        internal override void ResetPage()
+        {
+            Players.Clear();
+            _indexer = 0;
+        }
     }
 }
