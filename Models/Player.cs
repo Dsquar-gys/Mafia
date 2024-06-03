@@ -1,4 +1,3 @@
-using System;
 using ReactiveUI;
 
 namespace Mafia.Models;
@@ -26,6 +25,10 @@ public class Player : ReactiveObject
         get => _role;
         set => this.RaiseAndSetIfChanged(ref _role, value);
     }
+
+    public bool IsKickedOut { get; set; } = false;
+    
+    public bool[] Fouls { get; } = { false, false, false };
 
     public Player(int position, string name)
     {

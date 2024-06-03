@@ -21,7 +21,7 @@ namespace Mafia.Models
             MasterNameProperty = name;
         }
 
-        public static void CreateReport()
+        public static void CreateReport( GameOver state )
         {
             //TODO
         }

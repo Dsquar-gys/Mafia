@@ -1,11 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
-using System.Threading.Tasks;
 using System.Timers;
 using DynamicData;
-using DynamicData.Binding;
 using Mafia.Models;
 using ReactiveUI;
 
@@ -19,6 +18,7 @@ public class RoundViewModel : Page
     private readonly Timer _secondTimer = new();
     private Player? _currentPlayer;
     private int _speechIteration;
+    private RoundStage _currentStage = RoundStage.Night;
     
     private bool Paused
     {
@@ -39,12 +39,15 @@ public class RoundViewModel : Page
     }
     
     public ObservableCollection<Player> Players { get; } = new();
+    public ObservableCollection<Player> SpeakablePlayers { get; } = new();
+    public ObservableCollection<Player> NominatedPlayers { get; } = new();
 
     public Player? CurrentPlayer
     {
         get => _currentPlayer;
         set => this.RaiseAndSetIfChanged(ref _currentPlayer, value);
     }
+
 
     public RoundViewModel()
     {
@@ -57,7 +60,10 @@ public class RoundViewModel : Page
             .Subscribe(_ =>
             {
                 Players.Clear();
+                SpeakablePlayers.Clear();
+                
                 Players.AddRange(Statistic.Players.Items);
+                SpeakablePlayers.AddRange(Players);
 
                 _speechIteration = 0;
                 CurrentPlayer = Players.FirstOrDefault();
@@ -78,7 +84,7 @@ public class RoundViewModel : Page
             {
                 if (!x) return;
                 Paused = x;
-                CurrentPlayer = Players[++_speechIteration % Players.Count];
+                CurrentPlayer = SpeakablePlayers[++_speechIteration % SpeakablePlayers.Count];
             });
 
         // Change time display each second
@@ -92,14 +98,66 @@ public class RoundViewModel : Page
         if (!Paused && Seconds >= 60) Seconds = 0;
     });
     
-    //TODO EndSessionCommand
-    public ReactiveCommand<Unit, Unit> EndSessionCommand =>
-        ReactiveCommand.Create(() =>
+    public ReactiveCommand<Player, Unit> AddFoul => ReactiveCommand.Create<Player>(player =>
+    {
+        var index = player.Fouls.IndexOf(false);
+        player.Fouls[index] = true;
+
+        if (!player.Fouls.All(x => x)) return;
+        SpeakablePlayers.Remove(player);
+        --_speechIteration;
+
+        if (CurrentPlayer != player) return;
+        Seconds = 60;
+    });
+    
+    public ReactiveCommand<Player, Unit> AddCandidate => ReactiveCommand.Create<Player>(player =>
+    {
+        if ( ! NominatedPlayers.Contains(player))
+            NominatedPlayers.Add(player);
+    });
+    
+    public ReactiveCommand<Player, Unit> KickPlayer => ReactiveCommand.Create<Player>(player =>
+    {
+        if (SpeakablePlayers.Remove(player))
         {
-            Statistic.CreateReport();
+            player.IsKickedOut = true;
+            --_speechIteration;
+        }
+
+        var state = CheckGameOver();
+        switch (state)
+        {
+            case GameOver.None:
+                return;
+            case GameOver.RedWins:
+            case GameOver.BlackWins:
+            default:
+                EndSessionCommand.Execute(state).Subscribe();
+                return;
+        }
+    });
+    
+    public ReactiveCommand<GameOver, Unit> EndSessionCommand { get; } =
+        ReactiveCommand.Create<GameOver>(gameOver =>
+        {
+            Statistic.CreateReport( gameOver );
             
             MainWindowViewModel.Instance!.ResetSession();
         });
 
+    private GameOver CheckGameOver()
+    {
+        var alive = Players.Where(x => !x.IsKickedOut).ToArray();
+        var mafias = alive.Where(x => x.Role is GameRole.Mafia or GameRole.Don).ToArray();
+        
+        if (mafias.Length == 0) return GameOver.RedWins;
+        
+        var peasants = alive.Except(mafias).ToArray();
+        if (peasants.Length <= mafias.Length) return GameOver.BlackWins;
+
+        return GameOver.None;
+    }
+    
     internal override void ResetPage() { }
 }
