@@ -17,6 +17,16 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-	<TransitioningContentControl Content="{Binding CurrentPage}"/>
+	<Grid>
+		<Grid.RowDefinitions>
+			<!-- Header -->
+			<RowDefinition Height="Auto"
+			               MinHeight="200px" />
+			<!-- Body -->
+			<RowDefinition Height="Star" />
+		</Grid.RowDefinitions>
+		
+		
+	</Grid>
 	
 </Window>
