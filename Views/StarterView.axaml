@@ -5,7 +5,8 @@
 			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
 			 xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              xmlns:vm="using:Mafia.ViewModels"
-			 mc:Ignorable="d"
+             xmlns:views="clr-namespace:Mafia.Views"
+             mc:Ignorable="d"
 			 d:DesignWidth="800"
 			 d:DesignHeight="450"
              x:Class="Mafia.Views.StarterView"
@@ -31,12 +32,14 @@
 				FontSize="20"
 				Width="150"
 				IsEnabled="{Binding Launchable}"
-				Command="{Binding Source={x:Static vm:MainWindowViewModel.Instance}, Path=MoveNextCommand}">
+				Command="{Binding $parent[views:MainWindow].((vm:MainWindowViewModel)DataContext).MoveNextCommand}">
+			
 			<i:Interaction.Behaviors>
 				<iac:EventTriggerBehavior EventName="Click">
 					<iac:InvokeCommandAction Command="{Binding ChangeMasterName}"/>
 				</iac:EventTriggerBehavior>
 			</i:Interaction.Behaviors>
+			
 		</Button>
 	</StackPanel>
 

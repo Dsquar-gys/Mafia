@@ -1,24 +1,35 @@
 ﻿using System;
 using Mafia.Models;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
-using Mafia.Templated_Controls;
+using DynamicData;
+using DynamicData.Binding;
+using Mafia.Headers;
 using ReactiveUI;
 
 namespace Mafia.ViewModels
 {
-    public class LobbyConfigViewModel : Page
+    public sealed class LobbyConfigViewModel : Page
     {
         #region Private fields
         
         private int _indexer;
-        
+
         #endregion
+
+        public LobbyConfigViewModel()
+        {
+            Header = new LobbyConfigHeader(this);
+
+            Statistic.Players.Connect()
+                .Bind(Players)
+                .Subscribe();
+        }
         
         #region Properties
-        
-        public ObservableCollection<Player> Players { get; } = new();
+
+        public override SessionStage Stage => SessionStage.PlayerLineUp;
+        public IObservableCollection<Player> Players { get; } = new ObservableCollectionExtended<Player>();
         private string GetRandomName
         {
             get
@@ -38,32 +49,25 @@ namespace Mafia.ViewModels
         }
         
         #endregion
-
+        
         #region Commands
 
         public ReactiveCommand<Unit, Unit> AddPlayerCommand => ReactiveCommand.Create(() =>
         {
-            Players.Add(new Player(++_indexer, GetRandomName));
+            Statistic.Players.Add(new Player(++_indexer, GetRandomName));
         });
 
         public ReactiveCommand<Player, Unit> RemovePlayerCommand => ReactiveCommand.Create<Player>(player =>
         {
-            Players.Remove(player);
+            Statistic.Players.Remove(player);
             _indexer--;
             var tempIndexer = 0;
             foreach (var exPlayer in Players)
                 exPlayer.UpdatePosition(++tempIndexer);
         });
 
-        public ReactiveCommand<Unit, Unit> CommitPlayersCommand => ReactiveCommand.Create(() =>
-        {
-            Statistic.Players.Edit(innerCollection =>
-            {
-                innerCollection.Clear();
-                innerCollection.AddRange(Players);
-            });
-        });
-
         #endregion
+
+        public override HeaderTemplate Header { get; init; }
     }
 }

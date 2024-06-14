@@ -3,6 +3,7 @@
         xmlns:vm="using:Mafia.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
 		d:DesignWidth="800" MinWidth="535"
 		d:DesignHeight="450" MinHeight="300"
@@ -16,16 +17,57 @@
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
+	
+	<Window.Resources>
+		<system:Double x:Key="HeaderHeight">60</system:Double>
+	</Window.Resources>
 
 	<Grid>
 		<Grid.RowDefinitions>
 			<!-- Header -->
 			<RowDefinition Height="Auto"
-			               MinHeight="200px" />
+			               MinHeight="{StaticResource HeaderHeight}"
+			               MaxHeight="{StaticResource HeaderHeight}"/>
 			<!-- Body -->
-			<RowDefinition Height="Star" />
+			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		
+		<!-- Header -->
+		<Grid Grid.Row="0"
+		      Name="HeaderControl"
+		      Background="RoyalBlue"
+		      ColumnDefinitions="Auto, *, Auto">
+			
+			<!-- Back/Forward -->
+			<Button Grid.Column="0"
+			        Classes="System"
+			        Command="{CompiledBinding MoveBackCommand}">
+				<Image Source="/Assets/arrow-left.png" />
+			</Button>
+			
+			<Button Grid.Column="2"
+			        Classes="System"
+			        Command="{CompiledBinding MoveNextCommand}">
+				<Image Source="/Assets/arrow-right.png" />
+			</Button>
+			
+			<TransitioningContentControl Grid.Column="1"
+			                             Content="{Binding CurrentPage.Stage}"
+			                             ContentTemplate="{Binding CurrentPage.Header}"/>
+			
+			<Grid.Styles>
+				<Style Selector="Button.System">
+					<Setter Property="VerticalAlignment" Value="Stretch" />
+					<Setter Property="Background" Value="Transparent" />
+					<Setter Property="MaxHeight" Value="{StaticResource HeaderHeight}" />
+				</Style>
+			</Grid.Styles>
+			
+		</Grid>
+		
+		<TransitioningContentControl Grid.Row="1"
+		                             Name="CurrentPageControl"
+		                             Content="{Binding CurrentPage}"/>
 		
 	</Grid>
 	

@@ -15,7 +15,7 @@
     </Application.DataTemplates>
   
     <Application.Styles>
-        <FluentTheme />
+	    <StyleInclude Source="avares://Semi.Avalonia/Themes/Index.axaml"/>
 		<StyleInclude Source="Templated Controls/PlayerCard.axaml" />
     </Application.Styles>
 </Application>

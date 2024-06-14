@@ -9,7 +9,7 @@ public class Player : ReactiveObject
     private int _position;
     private string _nickname;
     private GameRole _role;
-    private short _fouls;
+    private int _fouls;
 
     public int Position
     {
@@ -40,7 +40,8 @@ public class Player : ReactiveObject
         _role = GameRole.None;
         _fouls = 0;
 
-        this.WhenAnyValue(pl => pl._fouls >= 3).Subscribe(x => IsMuted = x);
+        this.WhenAnyValue(pl => pl._fouls, fouls => fouls >= 3)
+            .Subscribe(x => IsMuted = x);
     }
 
     public ReactiveCommand<Unit, Unit> SetFoul => ReactiveCommand.Create(() => { _fouls++; });

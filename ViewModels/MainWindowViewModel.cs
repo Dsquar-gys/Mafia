@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reactive;
+using System.Windows.Input;
 using ReactiveUI;
 
 namespace Mafia.ViewModels
@@ -17,11 +18,16 @@ namespace Mafia.ViewModels
 
         #region Properties
 
-        public static MainWindowViewModel? Instance { get; private set; }
         public Page CurrentPage
         {
             get => _currentPage;
             set => this.RaiseAndSetIfChanged(ref _currentPage, value);
+        }
+
+        private int PageIndex
+        {
+            get => _pageIndex;
+            set => this.RaiseAndSetIfChanged(ref _pageIndex, value);
         }
         
         public IObservable<bool> CanMoveForward { get; }
@@ -32,35 +38,38 @@ namespace Mafia.ViewModels
 
         public MainWindowViewModel()
         {
-            Instance ??= this;
-            
-            _pages = new Page[]{
+            _pages = new Page[]
+            {
                 new StarterViewModel(),
                 new LobbyConfigViewModel(),
-                new TeamsConfigViewModel()};
+                new TeamsConfigViewModel()
+            };
 
             CanMoveForward = this.WhenAnyValue(
-                x => x._pageIndex, x => x._pages.Length,
+                x => x.PageIndex, x => x._pages.Length,
                 (cur, len) => cur < len - 1);
             
-            CanMoveBack = this.WhenAnyValue(x => x._pageIndex,
+            CanMoveBack = this.WhenAnyValue(x => x.PageIndex,
                 index => index > 0);
-
+            
+            MoveNextCommand = ReactiveCommand.Create(GetNextPage, CanMoveForward);
+            MoveBackCommand = ReactiveCommand.Create(GetPreviousPage, CanMoveBack);
+            
             _currentPage = _pages[_pageIndex];
         }
 
         #region Commands
 
-        public ReactiveCommand<Unit, Unit> MoveNextCommand => ReactiveCommand.Create(GetNextPage, CanMoveForward);
-        public ReactiveCommand<Unit, Unit> MoveBackCommand => ReactiveCommand.Create(GetPreviousPage, CanMoveBack);
+        public ICommand MoveNextCommand { get; }
+        public ICommand MoveBackCommand { get; }
 
         #endregion
 
         #region Command Methods
 
-        private void GetNextPage() => CurrentPage = _pages[++_pageIndex];
+        private void GetNextPage() => CurrentPage = _pages[++PageIndex];
 
-        private void GetPreviousPage() => CurrentPage = _pages[--_pageIndex];
+        private void GetPreviousPage() => CurrentPage = _pages[--PageIndex];
 
         #endregion
     }

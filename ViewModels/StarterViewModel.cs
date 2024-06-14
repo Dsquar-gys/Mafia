@@ -1,4 +1,5 @@
 ﻿using System.Reactive;
+using Mafia.Headers;
 using Mafia.Models;
 using ReactiveUI;
 
@@ -14,6 +15,8 @@ namespace Mafia.ViewModels
         #endregion
         
         #region Properties
+
+        public override SessionStage Stage => SessionStage.StartScreen;
 
         public string MasterName
         {
@@ -41,5 +44,7 @@ namespace Mafia.ViewModels
         });
 
         #endregion
+
+        public override HeaderTemplate Header { get; init; } = new EmptyHeader();
     }
 }

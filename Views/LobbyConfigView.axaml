@@ -2,11 +2,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
-			 xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
 			 xmlns:vm="using:Mafia.ViewModels"
-             xmlns:models="using:Mafia.Models"
-			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:v="clr-namespace:Mafia.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Mafia.Views.LobbyConfigView"
 			 x:DataType="vm:LobbyConfigViewModel">
 
@@ -16,46 +14,9 @@
 
 	<Grid RowDefinitions="Auto, *">
 		
-		<!-- Header -->
-		<Grid Grid.Row="0"
-			  ColumnDefinitions="*,*,*"
-			  Margin="15">
-			<StackPanel Grid.Column="0"
-						Orientation="Horizontal"
-						Spacing="20">
-				<Border Padding="5"
-						Background="RoyalBlue"
-						CornerRadius="5">
-					<ScrollViewer HorizontalScrollBarVisibility="Hidden"
-								  MaxWidth="200">
-						<TextBlock Name="MasterNameDisplay"
-						   VerticalAlignment="Center"
-						   Foreground="White"
-						   Text="{Binding Source={x:Static models:Statistic.MasterNameProperty}}"/>
-					</ScrollViewer>
-				</Border>
-				<Button Content="Change Master"
-				        Command="{Binding Source={x:Static vm:MainWindowViewModel.Instance},
-							Path=MoveBackCommand}" />
-			</StackPanel>
-			<Button Grid.Column="1"
-					Content="Add Player"
-					Command="{Binding AddPlayerCommand}"/>
-			<Button Grid.Column="2"
-					Content="Next"
-					Command="{Binding Source={x:Static vm:MainWindowViewModel.Instance},
-						Path=MoveNextCommand}">
-				<i:Interaction.Behaviors>
-					<iac:EventTriggerBehavior EventName="Click">
-						<iac:InvokeCommandAction Command="{Binding CommitPlayersCommand}"/>
-					</iac:EventTriggerBehavior>
-				</i:Interaction.Behaviors>
-			</Button>
-		</Grid>
-		
 		<!-- Body -->
 		<Border Grid.Row="1"
-				Background="RoyalBlue">
+				Background="White">
 			<ScrollViewer VerticalScrollBarVisibility="Auto">
 				<ItemsControl Margin="20"
 						  Name="PlayersBody"
@@ -66,6 +27,61 @@
 							<WrapPanel />
 						</ItemsPanelTemplate>
 					</ItemsControl.ItemsPanel>
+					
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
+							<Border CornerRadius="10"
+							        Background="RoyalBlue"
+							        Margin="10">
+								<StackPanel Orientation="Horizontal">
+									<TextBlock Text="{Binding Position, Converter={StaticResource IntegerConverter}}"
+									           VerticalAlignment="Center"
+									           Margin="15, 0, 10, 0"
+									           Width="15"/>
+									<TextBox Text="{Binding Nickname}"
+									         VerticalAlignment="Center"
+									         Width="120"/>
+									<Button Padding="10"
+									        Background="Transparent"
+									        Command="{Binding $parent[v:LobbyConfigView].((vm:LobbyConfigViewModel)DataContext).RemovePlayerCommand}"
+									        CommandParameter="{Binding .}">
+										<Border CornerRadius="10">
+											<Image Source="/Assets/cross.png"
+											       Width="20"/>
+
+											<Border.Transitions>
+												<Transitions>
+													<BrushTransition Property="Background" Duration="0:0:0.1" />
+												</Transitions>
+											</Border.Transitions>
+						  
+											<Border.Styles>
+												<Style Selector="Button > Border">
+													<Setter Property="Background" Value="Transparent" />
+												</Style>
+												<Style Selector="Button:pointerover > Border">
+													<Setter Property="Background" Value="Red" />
+												</Style>
+											</Border.Styles>
+										</Border>
+
+										<Button.Styles>
+											<Style Selector="Button">
+												<Setter Property="Background" Value="Transparent" />
+											</Style>
+											<Style Selector="Button:pointerover /template/ ContentPresenter">
+												<Setter Property="Background" Value="Transparent" />
+											</Style>
+											<Style Selector="Button:pressed /template/ ContentPresenter">
+												<Setter Property="Background" Value="Transparent" />
+											</Style>
+										</Button.Styles>
+									</Button>
+								</StackPanel>
+							</Border>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
 					
 				</ItemsControl>
 			</ScrollViewer>

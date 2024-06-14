@@ -4,6 +4,8 @@
     <option name="projectPerEditor">
       <map>
         <entry key="App.axaml" value="Mafia.csproj" />
+        <entry key="Headers/LobbyConfigHeaderView.axaml" value="Mafia.csproj" />
+        <entry key="Models/IconResources.axaml" value="Mafia.csproj" />
         <entry key="Templated Controls/PlayerCard.axaml" value="Mafia.csproj" />
         <entry key="Views/LobbyConfigView.axaml" value="Mafia.csproj" />
         <entry key="Views/MainWindow.axaml" value="Mafia.csproj" />

@@ -9,53 +9,206 @@
              d:DesignWidth="800"
              d:DesignHeight="450"
              x:Class="Mafia.Views.TeamsConfigView"
-             x:DataType="vm:TeamsConfigViewModel">
+             x:DataType="vm:TeamsConfigViewModel"
+             Loaded="View_OnLoaded">
     
     <Design.DataContext>
         <vm:TeamsConfigViewModel />
     </Design.DataContext>
     
-    <Grid RowDefinitions="Auto, *">
-		
-        <!-- Header -->
-        <Grid Grid.Row="0"
-              ColumnDefinitions="*,*,*"
-              Margin="15">
-            <StackPanel Grid.Column="0"
-                        Orientation="Horizontal"
-                        Spacing="20">
-                <Button Content="Manage Players"
-                        Command="{Binding Source={x:Static vm:MainWindowViewModel.Instance},
-                            Path=MoveBackCommand}" />
-            </StackPanel>
-            <Border Grid.Column="1"
-                    Padding="5"
-                    Background="RoyalBlue"
-                    CornerRadius="5">
-                <TextBlock Text="Manage Teams"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Foreground="White"/>
-            </Border>
-            <Button Grid.Column="2"
-                    Content="Next"
-                    Command="{Binding Source={x:Static vm:MainWindowViewModel.Instance},
-                        Path=MoveNextCommand}" />
-        </Grid>
+    <Panel>
         
         <!-- Body -->
-        <Border Grid.Row="1"
-                Background="RoyalBlue">
-            <!-- TODO -->
+        <Border Background="RoyalBlue"
+                Name="DragContainer"
+                DragDrop.AllowDrop="True">
+            
+            <Grid>
+                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MinWidth="200" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" MinWidth="200" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" MinWidth="200" />
+                </Grid.ColumnDefinitions>
+                
+                <!-- Splitters -->
+                <GridSplitter Grid.Column="1" />
+                <GridSplitter Grid.Column="3" />
+                
+                <!-- Transparent -->
+                <Border Grid.Column="0"
+                        Background="RoyalBlue"
+                        Padding="10"
+                        MinWidth="200">
+                    
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <ItemsRepeater ItemsSource="{Binding TransparentPlayers}"
+                                       Name="WhiteCollection"
+                                       Background="Transparent">
+                            
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="White"
+                                            Padding="10"
+                                            CornerRadius="10"
+                                            PointerPressed="OnPointerPressed">
+                                        <Grid ColumnDefinitions="*, *">
+                                            <TextBlock Grid.Column="0"
+                                                       Text="{Binding Position, Converter={StaticResource IntegerConverter}}"
+                                                       Margin="8,0"/>
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding Nickname}"
+                                                       HorizontalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                            
+                            <ItemsRepeater.Layout>
+                                <StackLayout Spacing="10" />
+                            </ItemsRepeater.Layout>
+                            
+                        </ItemsRepeater>
+                    </ScrollViewer>
+                    
+                </Border>
+                
+                <!-- Reds -->
+                <Border Grid.Column="2"
+                        Background="RoyalBlue"
+                        Padding="10"
+                        Name="FloPPa">
+                    
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <ItemsRepeater ItemsSource="{Binding RedPlayers}"
+                                 Name="RedCollection"
+                                 Background="Transparent">
+                            
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#FF6E64"
+                                            Padding="10"
+                                            CornerRadius="10"
+                                            PointerPressed="OnPointerPressed">
+                                        <Grid ColumnDefinitions="*, Auto, *">
+                                            <TextBlock Grid.Column="0"
+                                                       Text="{Binding Position, Converter={StaticResource IntegerConverter}}"
+                                                       Margin="8,0"/>
+                                            <RadioButton Grid.Column="1"
+                                                         VerticalAlignment="Center"
+                                                         Theme="{DynamicResource ButtonRadioButton}"
+                                                         Content="Detective"
+                                                         IsChecked="{Binding IsActiveRole}"
+                                                         GroupName="DetectiveDefinition">
+                                                
+                                                <RadioButton.Styles>
+                                                    <Style Selector="RadioButton:checked">
+                                                        <Setter Property="Foreground" Value="RoyalBlue"/>
+                                                    </Style>
+                                                </RadioButton.Styles>
+                                            </RadioButton>
+                                            <TextBlock Grid.Column="2"
+                                                       Text="{Binding Nickname}"
+                                                       HorizontalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                            
+                            <ItemsRepeater.Layout>
+                                <StackLayout Spacing="10" />
+                            </ItemsRepeater.Layout>
+                            
+                        </ItemsRepeater>
+                    </ScrollViewer>
+                    
+                </Border>
+                
+                <!-- Blacks -->
+                <Border Grid.Column="4"
+                        Background="RoyalBlue"
+                        Padding="10">
+                    
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <ItemsRepeater ItemsSource="{Binding BlackPlayers}"
+                                       Name="BlackCollection"
+                                       Background="Transparent">
+                            
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="DimGray"
+                                            Padding="10"
+                                            CornerRadius="10"
+                                            PointerPressed="OnPointerPressed">
+                                        <Grid ColumnDefinitions="*, auto *">
+                                            <TextBlock Grid.Column="0"
+                                                       VerticalAlignment="Center"
+                                                       Text="{Binding Position, Converter={StaticResource IntegerConverter}}"
+                                                       Margin="8,0"/>
+                                            <RadioButton Grid.Column="1"
+                                                         VerticalAlignment="Center"
+                                                         Theme="{DynamicResource ButtonRadioButton}"
+                                                         Content="Don"
+                                                         IsChecked="{Binding IsActiveRole}"
+                                                         GroupName="DonDefinition">
+                                                
+                                                <RadioButton.Styles>
+                                                    <Style Selector="RadioButton:checked">
+                                                        <Setter Property="Foreground" Value="DarkRed"/>
+                                                    </Style>
+                                                </RadioButton.Styles>
+                                                
+                                            </RadioButton>
+                                            <TextBlock Grid.Column="2"
+                                                       VerticalAlignment="Center"
+                                                       Text="{Binding Nickname}"
+                                                       HorizontalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                            
+                            <ItemsRepeater.Layout>
+                                <StackLayout Spacing="10" />
+                            </ItemsRepeater.Layout>
+                            
+                        </ItemsRepeater>
+                    </ScrollViewer>
+                    
+                </Border>
+                
+            </Grid>
         </Border>
-
-        <!-- Styles -->
-        <Grid.Styles>
-            <Style Selector="Button">
-                <Setter Property="HorizontalAlignment" Value="Center" />
-            </Style>
-        </Grid.Styles>
         
-    </Grid>
+        <!-- Ghost player -->
+        <Border CornerRadius="5"
+                Name="GhostItem"
+                Padding="10"
+                Background="White"
+                BoxShadow="1 2 3 0 Black"
+                BorderBrush="Black"
+                Opacity="0.6"
+                BorderThickness="1.5"
+                Width="200"
+                Height="40">
+            <Grid ColumnDefinitions="*, *">
+                <TextBlock Grid.Column="0"
+                           Text="{Binding DraggingPlayer.Position,
+                                Converter={StaticResource IntegerConverter},
+                                FallbackValue='0'}"
+                           Margin="8,0"/>
+                <TextBlock Grid.Column="1"
+                           Text="{Binding DraggingPlayer.Nickname,
+                                FallbackValue='Player'}"
+                           HorizontalAlignment="Center"/>
+            </Grid>
+        </Border>
+        
+    </Panel>
     
 </UserControl>
