@@ -34,7 +34,7 @@ public partial class TeamsConfigView : UserControl
         var ghostPos = GhostItem.Bounds.Position;
         var offsetX = mousePos.X - ghostPos.X;
         var offsetY = mousePos.Y - ghostPos.Y;
-        GhostItem.RenderTransform = new TranslateTransform(offsetX, offsetY);
+        GhostItem.RenderTransform = new TranslateTransform(offsetX + 15, offsetY - 45);
         
         if (DataContext is not TeamsConfigViewModel vm) return;
         vm.StartDrag(player);
@@ -56,7 +56,7 @@ public partial class TeamsConfigView : UserControl
         var offsetX = currentPos.X - ghostPos.X;
         var offsetY = currentPos.Y - ghostPos.Y;
         
-        GhostItem.RenderTransform = new TranslateTransform(offsetX, offsetY);
+        GhostItem.RenderTransform = new TranslateTransform(offsetX + 15, offsetY - 45);
         
         // set drag cursor icon
         e.DragEffects = DragDropEffects.Move;

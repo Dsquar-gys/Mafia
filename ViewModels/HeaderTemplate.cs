@@ -4,9 +4,8 @@ using ReactiveUI;
 
 namespace Mafia.ViewModels;
 
-public abstract class HeaderTemplate : ReactiveObject, IDataTemplate
+public abstract class HeaderTemplate<TVM> : HeaderTemplateBase
+    where TVM : ViewModelBase
 {
-    public abstract Control? Build(object? param);
-
-    public abstract bool Match(object? data);
+    protected abstract TVM Parent { get; }
 }

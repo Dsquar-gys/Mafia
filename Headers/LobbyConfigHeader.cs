@@ -4,9 +4,9 @@ using Mafia.ViewModels;
 
 namespace Mafia.Headers;
 
-public class LobbyConfigHeader : HeaderTemplate
+public class LobbyConfigHeader : HeaderTemplate<LobbyConfigViewModel>
 {
-    public LobbyConfigViewModel Parent { get; }
+    protected override LobbyConfigViewModel Parent { get; }
 
     public LobbyConfigHeader(LobbyConfigViewModel parent)
     {

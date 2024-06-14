@@ -13,7 +13,7 @@ namespace Mafia.ViewModels;
 public class TeamsConfigViewModel : Page
 {
     public override SessionStage Stage => SessionStage.Teaming;
-    public override HeaderTemplate Header { get; init; }
+    public override HeaderTemplateBase Header { get; init; }
     
     #region Private fields
     

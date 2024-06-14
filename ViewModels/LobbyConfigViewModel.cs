@@ -68,6 +68,6 @@ namespace Mafia.ViewModels
 
         #endregion
 
-        public override HeaderTemplate Header { get; init; }
+        public override HeaderTemplateBase Header { get; init; }
     }
 }
