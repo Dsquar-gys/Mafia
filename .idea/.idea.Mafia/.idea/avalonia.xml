@@ -4,12 +4,15 @@
     <option name="projectPerEditor">
       <map>
         <entry key="App.axaml" value="Mafia.csproj" />
+        <entry key="Headers/EmptyHeaderView.axaml" value="Mafia.csproj" />
         <entry key="Headers/LobbyConfigHeaderView.axaml" value="Mafia.csproj" />
+        <entry key="Headers/RoundHeaderView.axaml" value="Mafia.csproj" />
         <entry key="Headers/TeamsConfigHeaderView.axaml" value="Mafia.csproj" />
         <entry key="Models/IconResources.axaml" value="Mafia.csproj" />
         <entry key="Templated Controls/PlayerCard.axaml" value="Mafia.csproj" />
         <entry key="Views/LobbyConfigView.axaml" value="Mafia.csproj" />
         <entry key="Views/MainWindow.axaml" value="Mafia.csproj" />
+        <entry key="Views/RoundView.axaml" value="Mafia.csproj" />
         <entry key="Views/StarterView.axaml" value="Mafia.csproj" />
         <entry key="Views/TeamsConfigView.axaml" value="Mafia.csproj" />
       </map>

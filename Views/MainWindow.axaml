@@ -20,6 +20,7 @@
 	
 	<Window.Resources>
 		<system:Double x:Key="HeaderHeight">60</system:Double>
+		<system:TimeSpan x:Key="TransitionDuration">0:00:00.300</system:TimeSpan>
 	</Window.Resources>
 
 	<Grid>
@@ -35,8 +36,15 @@
 		<!-- Header -->
 		<Grid Grid.Row="0"
 		      Name="HeaderControl"
-		      Background="RoyalBlue"
+		      Opacity="0"
+		      Background="{StaticResource DarkBlue}"
 		      ColumnDefinitions="Auto, *, Auto">
+			
+			<Grid.Transitions>
+				<Transitions>
+					<DoubleTransition Property="Opacity" Duration="{StaticResource TransitionDuration}"/>
+				</Transitions>
+			</Grid.Transitions>
 			
 			<!-- Back/Forward -->
 			<Button Grid.Column="0"
@@ -52,8 +60,11 @@
 			</Button>
 			
 			<TransitioningContentControl Grid.Column="1"
-			                             Content="{Binding CurrentPage.Stage}"
-			                             ContentTemplate="{Binding CurrentPage.Header}"/>
+			                             Content="{Binding CurrentPage.Header}">
+				<TransitioningContentControl.PageTransition>
+					<CrossFade Duration="{StaticResource TransitionDuration}" />
+				</TransitioningContentControl.PageTransition>
+			</TransitioningContentControl>
 			
 			<Grid.Styles>
 				<Style Selector="Button.System">
@@ -67,7 +78,11 @@
 		
 		<TransitioningContentControl Grid.Row="1"
 		                             Name="CurrentPageControl"
-		                             Content="{Binding CurrentPage}"/>
+		                             Content="{Binding CurrentPage}">
+			<TransitioningContentControl.PageTransition>
+				<CrossFade Duration="{StaticResource TransitionDuration}" />
+			</TransitioningContentControl.PageTransition>
+		</TransitioningContentControl>
 		
 	</Grid>
 	

@@ -7,16 +7,16 @@ namespace Mafia.ViewModels
 {
     public class StarterViewModel : Page
     {
-        #region Private fields
+        #region + Private fields +
         
         private string _masterName = "";
         private bool _launchable;
         
         #endregion
         
-        #region Properties
+        #region + Properties +
 
-        public override SessionStage Stage => SessionStage.StartScreen;
+        public override HeaderTemplateBase Header { get; init; } = new EmptyHeader();
 
         public string MasterName
         {
@@ -36,7 +36,7 @@ namespace Mafia.ViewModels
         
         #endregion
 
-        #region Commands
+        #region + Commands +
 
         public ReactiveCommand<Unit, Unit> ChangeMasterName => ReactiveCommand.Create(() =>
         {
@@ -44,7 +44,5 @@ namespace Mafia.ViewModels
         });
 
         #endregion
-
-        public override HeaderTemplateBase Header { get; init; } = new EmptyHeader();
     }
 }

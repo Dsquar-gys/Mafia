@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reactive;
 using System.Windows.Input;
 using ReactiveUI;
 
@@ -7,16 +6,15 @@ namespace Mafia.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        #region Private Fields
+        #region + Private Fields +
 
         private readonly Page[] _pages;
-        
         private Page _currentPage;
         private int _pageIndex;
 
         #endregion
 
-        #region Properties
+        #region + Properties +
 
         public Page CurrentPage
         {
@@ -38,12 +36,13 @@ namespace Mafia.ViewModels
 
         public MainWindowViewModel()
         {
-            _pages = new Page[]
-            {
+            _pages =
+            [
                 new StarterViewModel(),
                 new LobbyConfigViewModel(),
-                new TeamsConfigViewModel()
-            };
+                new TeamsConfigViewModel(),
+                new RoundViewModel()
+            ];
 
             CanMoveForward = this.WhenAnyValue(
                 x => x.PageIndex, x => x._pages.Length,
@@ -58,14 +57,14 @@ namespace Mafia.ViewModels
             _currentPage = _pages[_pageIndex];
         }
 
-        #region Commands
+        #region + Commands +
 
         public ICommand MoveNextCommand { get; }
         public ICommand MoveBackCommand { get; }
 
         #endregion
 
-        #region Command Methods
+        #region + Command Methods +
 
         private void GetNextPage() => CurrentPage = _pages[++PageIndex];
 

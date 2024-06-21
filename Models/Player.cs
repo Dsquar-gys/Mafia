@@ -32,6 +32,7 @@ public class Player : ReactiveObject
     public bool IsActiveRole => _role is GameRole.Detective or GameRole.Don;
     public bool IsKickedOut { get; set; } = false;
     public bool IsMuted { get; private set; }
+    public bool IsNominated { get; set; } = false;
 
     public Player(int position, string name)
     {
@@ -44,7 +45,9 @@ public class Player : ReactiveObject
             .Subscribe(x => IsMuted = x);
     }
 
-    public ReactiveCommand<Unit, Unit> SetFoul => ReactiveCommand.Create(() => { _fouls++; });
+    public ReactiveCommand<Unit, Unit> SetFoulCommand => ReactiveCommand.Create(() => { _fouls++; });
+    public ReactiveCommand<Unit, Unit> NominateCommand => ReactiveCommand.Create(() => { IsNominated = true; });
+    public ReactiveCommand<Unit, Unit> KickCommand => ReactiveCommand.Create(() => { IsKickedOut = true; });
     
     public void UpdatePosition(int newPos) => Position = newPos;
     public void UpdateRole(GameRole newRole) => Role = newRole;

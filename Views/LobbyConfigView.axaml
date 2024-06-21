@@ -16,7 +16,7 @@
 		
 		<!-- Body -->
 		<Border Grid.Row="1"
-				Background="White">
+				Background="{StaticResource LightBlue}">
 			<ScrollViewer VerticalScrollBarVisibility="Auto">
 				<ItemsControl Margin="20"
 						  Name="PlayersBody"
@@ -32,7 +32,7 @@
 						<DataTemplate>
 							<!-- ReSharper disable once Xaml.PossibleNullReferenceException -->
 							<Border CornerRadius="10"
-							        Background="RoyalBlue"
+							        Background="White"
 							        Margin="10">
 								<StackPanel Orientation="Horizontal">
 									<TextBlock Text="{Binding Position, Converter={StaticResource IntegerConverter}}"

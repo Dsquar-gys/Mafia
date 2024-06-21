@@ -12,7 +12,7 @@ namespace Mafia.Views
             InitializeComponent();
 
             this.WhenAnyValue(window => window.CurrentPageControl.Content, vm => vm is not StarterViewModel)
-                .Subscribe(x => HeaderControl.IsVisible = x);
+                .Subscribe(x => HeaderControl.Opacity = x ? 1 : 0);
         }
     }
 }

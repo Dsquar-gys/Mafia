@@ -11,7 +11,7 @@ namespace Mafia.ViewModels
 {
     public sealed class LobbyConfigViewModel : Page
     {
-        #region Private fields
+        #region + Private fields +
         
         private int _indexer;
 
@@ -26,9 +26,9 @@ namespace Mafia.ViewModels
                 .Subscribe();
         }
         
-        #region Properties
+        #region + Properties +
 
-        public override SessionStage Stage => SessionStage.PlayerLineUp;
+        public override HeaderTemplateBase Header { get; init; }
         public IObservableCollection<Player> Players { get; } = new ObservableCollectionExtended<Player>();
         private string GetRandomName
         {
@@ -50,7 +50,7 @@ namespace Mafia.ViewModels
         
         #endregion
         
-        #region Commands
+        #region + Commands +
 
         public ReactiveCommand<Unit, Unit> AddPlayerCommand => ReactiveCommand.Create(() =>
         {
@@ -67,7 +67,5 @@ namespace Mafia.ViewModels
         });
 
         #endregion
-
-        public override HeaderTemplateBase Header { get; init; }
     }
 }

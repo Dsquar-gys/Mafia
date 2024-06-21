@@ -9,7 +9,8 @@ namespace Mafia
     {
         public Control Build(object data)
         {
-            var name = data.GetType().FullName!.Replace("ViewModel", "View");
+            var vmName = data.GetType().FullName!;
+            var name = data is ViewModelBase ? vmName.Replace("ViewModel", "View") : vmName + "View";
             var type = Type.GetType(name);
 
             if (type != null)
@@ -22,7 +23,7 @@ namespace Mafia
 
         public bool Match(object data)
         {
-            return data is ViewModelBase;
+            return data is ViewModelBase or HeaderTemplateBase;
         }
     }
 }

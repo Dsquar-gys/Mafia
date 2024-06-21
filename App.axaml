@@ -8,6 +8,14 @@
 
 	<Application.Resources>
 		<converters:IntegerConverter x:Key="IntegerConverter" />
+		
+		<SolidColorBrush x:Key="DarkBlue">#1B263B</SolidColorBrush>
+		<SolidColorBrush x:Key="DarkRed">#8B0000</SolidColorBrush>
+		<SolidColorBrush x:Key="DarkGreen">#556B2F</SolidColorBrush>
+		<SolidColorBrush x:Key="DarkGray">#696969</SolidColorBrush>
+		<SolidColorBrush x:Key="LightBlue">#3B465B</SolidColorBrush>
+		<SolidColorBrush x:Key="Burgundy">#8B0020</SolidColorBrush>
+		<SolidColorBrush x:Key="Golden">#DAA520</SolidColorBrush>
 	</Application.Resources>
 	
     <Application.DataTemplates>
@@ -16,6 +24,5 @@
   
     <Application.Styles>
 	    <StyleInclude Source="avares://Semi.Avalonia/Themes/Index.axaml"/>
-		<StyleInclude Source="Templated Controls/PlayerCard.axaml" />
     </Application.Styles>
 </Application>

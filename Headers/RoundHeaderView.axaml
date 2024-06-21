@@ -1,24 +1,25 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:models="clr-namespace:Mafia.Models"
              xmlns:headers="clr-namespace:Mafia.Headers"
+             xmlns:models="clr-namespace:Mafia.Models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Mafia.Headers.LobbyConfigHeaderView"
-             x:DataType="headers:LobbyConfigHeader">
+             x:Class="Mafia.Headers.RoundHeaderView"
+             x:DataType="headers:RoundHeader">
     
     <Design.DataContext>
-        <headers:LobbyConfigHeader />
+        <headers:RoundHeader />
     </Design.DataContext>
     
     <Grid ColumnDefinitions="*,*,*"
           Margin="15">
+			
         <StackPanel Grid.Column="0"
                     Orientation="Horizontal"
-                    HorizontalAlignment="Left">
+                    Spacing="20">
             <Border Padding="5"
-                    Background="{StaticResource Golden}"
+                    Background="{StaticResource DarkBlue}"
                     CornerRadius="5">
                 <ScrollViewer HorizontalScrollBarVisibility="Hidden"
                               MaxWidth="200">
@@ -29,12 +30,15 @@
                 </ScrollViewer>
             </Border>
         </StackPanel>
-        <Button Grid.Column="1"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Content="Add Player"
-                Foreground="White"
-                Command="{CompiledBinding  Parent.AddPlayerCommand}"/>
+			
+        <Label Grid.Column="1"
+               HorizontalAlignment="Center">Round</Label>
+			
+        <Button Grid.Column="2"
+                Content="End session"
+                Command="{Binding Parent.EndSessionCommand}"
+                CommandParameter="{x:Static models:GameOver.None}"/>
+			
     </Grid>
     
 </UserControl>

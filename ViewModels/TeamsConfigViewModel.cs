@@ -5,17 +5,17 @@ using System.Linq;
 using System.Reactive;
 using DynamicData;
 using DynamicData.Binding;
+using Mafia.Headers;
 using Mafia.Models;
 using ReactiveUI;
 
 namespace Mafia.ViewModels;
 
-public class TeamsConfigViewModel : Page
+public sealed class TeamsConfigViewModel : Page
 {
-    public override SessionStage Stage => SessionStage.Teaming;
-    public override HeaderTemplateBase Header { get; init; }
+    public const string CustomFormat = "player-format";
     
-    #region Private fields
+    #region + Private fields +
     
     private Player? _draggingPlayer;
 
@@ -25,10 +25,24 @@ public class TeamsConfigViewModel : Page
     
     #endregion
     
-    #region Properties
+    public TeamsConfigViewModel()
+    {
+        Header = new TeamsConfigHeader(this); // Remember about player NICKNAME CHANGE
+
+        Statistic.Players.CountChanged
+            .Subscribe(x =>
+            {
+                Console.WriteLine("Amount of players changed to {0}", x);
+                CountChanged();
+            });
+
+        TransparentPlayers.WhenPropertyChanged(x => x.Count)
+            .Subscribe(x => ReadyForward = x.Value == 0);
+    }
     
-    public const string CustomFormat = "player-format";
+    #region + Properties +
     
+    public override HeaderTemplateBase Header { get; init; }
     public ObservableCollection<Player> TransparentPlayers { get; } = new();
     public ObservableCollection<Player> BlackPlayers { get; } = new();
     public ObservableCollection<Player> RedPlayers { get; } = new();
@@ -46,23 +60,13 @@ public class TeamsConfigViewModel : Page
     }
     
     #endregion
-
-    public TeamsConfigViewModel()
-    { // Remember about player NICKNAME CHANGE
-
-        Statistic.Players.CountChanged
-            .Subscribe(x =>
-            {
-                Console.WriteLine("Amount of players changed to {0}", x);
-                CountChanged();
-            });
-
-        TransparentPlayers.WhenPropertyChanged(x => x.Count)
-            .Subscribe(x => ReadyForward = x.Value == 0);
-    }
-
+    
+    #region + Commands +
+    
     public ReactiveCommand<Unit, Unit> ShuffleCommand => ReactiveCommand.Create(() =>
     {
+        var rand = new Random();
+            
         var playerPool = new List<Player>(TransparentPlayers.Concat(RedPlayers).Concat(BlackPlayers));
         TransparentPlayers.Clear();
         RedPlayers.Clear();
@@ -73,8 +77,8 @@ public class TeamsConfigViewModel : Page
         
         playerPool.Shuffle();
         
-        BlackPlayers.AddRange(playerPool.Take((int)mafias));
-        RedPlayers.AddRange(playerPool.Skip((int)mafias));
+        BlackPlayers.AddRange(playerPool.Take((int)mafias).OrderBy(x => x.Position));
+        RedPlayers.AddRange(playerPool.Skip((int)mafias).OrderBy(x => x.Position));
         
         // Reset roles
         foreach (var blackPlayer in BlackPlayers)
@@ -82,9 +86,13 @@ public class TeamsConfigViewModel : Page
         foreach (var redPlayer in RedPlayers)
             redPlayer.UpdateRole(GameRole.Peasant);
         
-        BlackPlayers[0].UpdateRole(GameRole.Don);
-        RedPlayers[0].UpdateRole(GameRole.Detective);
+        BlackPlayers[rand.Next(BlackPlayers.Count - 1)].UpdateRole(GameRole.Don);
+        RedPlayers[rand.Next(RedPlayers.Count - 1)].UpdateRole(GameRole.Detective);
     });
+    
+    #endregion
+    
+    #region + Methods +
     
     public void StartDrag(Player player) => DraggingPlayer = player;
     
@@ -153,4 +161,6 @@ public class TeamsConfigViewModel : Page
             _ => (null, GameRole.None)
         };
     }
+    
+    #endregion
 }
