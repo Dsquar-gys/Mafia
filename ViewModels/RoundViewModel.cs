@@ -12,6 +12,8 @@ namespace Mafia.ViewModels;
 
 public sealed class RoundViewModel : Page
 {
+    #region + Private Fields +
+    
     private bool _paused = true;
     private int _seconds;
     private string _timeDisplay;
@@ -19,7 +21,16 @@ public sealed class RoundViewModel : Page
     private Player? _currentPlayer;
     private int _speechIteration;
     
+    #endregion
+
+    #region + Properties +
+    
     public override HeaderTemplateBase Header { get; init; }
+    
+    public override IObservable<bool> CanMoveForward { get; }
+    
+    public override IObservable<bool> CanMoveBack { get; }
+    
     private bool Paused
     {
         get => _paused;
@@ -39,7 +50,9 @@ public sealed class RoundViewModel : Page
     }
     
     public ObservableCollection<Player> Players { get; } = new();
+    
     public ObservableCollection<Player> SpeakablePlayers { get; } = new();
+    
     public ObservableCollection<Player> NominatedPlayers { get; } = new();
 
     public Player? CurrentPlayer
@@ -48,6 +61,7 @@ public sealed class RoundViewModel : Page
         set => this.RaiseAndSetIfChanged(ref _currentPlayer, value);
     }
 
+    #endregion
 
     public RoundViewModel()
     {
@@ -56,6 +70,11 @@ public sealed class RoundViewModel : Page
         _secondTimer.Elapsed += (sender, args) => Seconds++;
 
         Header = new RoundHeader(this);
+
+        // Permanent false
+        CanMoveBack = this.WhenAnyValue(vm => vm.Header, header => header is not RoundHeader);
+        // Permanent false
+        CanMoveForward = this.WhenAnyValue(vm => vm.Header, header => header is not RoundHeader);
         
         // Update players list
         Statistic.Players.CountChanged
@@ -93,6 +112,8 @@ public sealed class RoundViewModel : Page
         this.WhenAnyValue(x => x.Seconds)
             .Subscribe(x => TimeDisplay = $"{x / 60}:{x % 60}");
     }
+
+    #region + Commands +
 
     public ReactiveCommand<Unit, Unit> SwitchTimer => ReactiveCommand.Create(() =>
     {
@@ -147,6 +168,10 @@ public sealed class RoundViewModel : Page
             
             // TODO Reset session
         });
+    
+    #endregion
+    
+    #region Methods
 
     private GameOver CheckGameOver()
     {
@@ -160,4 +185,6 @@ public sealed class RoundViewModel : Page
 
         return GameOver.None;
     }
+    
+    #endregion
 }

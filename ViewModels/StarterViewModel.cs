@@ -1,4 +1,5 @@
-﻿using System.Reactive;
+﻿using System;
+using System.Reactive;
 using Mafia.Headers;
 using Mafia.Models;
 using ReactiveUI;
@@ -17,6 +18,16 @@ namespace Mafia.ViewModels
         #region + Properties +
 
         public override HeaderTemplateBase Header { get; init; } = new EmptyHeader();
+        
+        public bool Launchable
+        {
+            get => _launchable;
+            set => this.RaiseAndSetIfChanged(ref _launchable, value);
+        }
+        
+        public override IObservable<bool> CanMoveForward { get; }
+        
+        public override IObservable<bool> CanMoveBack { get; }
 
         public string MasterName
         {
@@ -27,15 +38,15 @@ namespace Mafia.ViewModels
                 this.RaiseAndSetIfChanged(ref _masterName, value);
             }
         }
-
-        public bool Launchable
-        {
-            get => _launchable;
-            set => this.RaiseAndSetIfChanged(ref _launchable, value);
-        }
         
         #endregion
 
+        public StarterViewModel()
+        {
+            CanMoveBack = this.WhenAnyValue(vm => vm.Header, header => header is not EmptyHeader);
+            CanMoveForward = this.WhenAnyValue(vm => vm.Launchable);
+        }
+        
         #region + Commands +
 
         public ReactiveCommand<Unit, Unit> ChangeMasterName => ReactiveCommand.Create(() =>

@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using DynamicData;
-using DynamicData.Binding;
 using Mafia.Headers;
 using Mafia.Models;
 using ReactiveUI;
@@ -20,31 +19,21 @@ public sealed class TeamsConfigViewModel : Page
     private Player? _draggingPlayer;
 
     private Random _random = new();
-
-    private bool _readyForward;
     
     #endregion
-    
-    public TeamsConfigViewModel()
-    {
-        Header = new TeamsConfigHeader(this); // Remember about player NICKNAME CHANGE
-
-        Statistic.Players.CountChanged
-            .Subscribe(x =>
-            {
-                Console.WriteLine("Amount of players changed to {0}", x);
-                CountChanged();
-            });
-
-        TransparentPlayers.WhenPropertyChanged(x => x.Count)
-            .Subscribe(x => ReadyForward = x.Value == 0);
-    }
     
     #region + Properties +
     
     public override HeaderTemplateBase Header { get; init; }
+    
+    public override IObservable<bool> CanMoveForward { get; }
+    
+    public override IObservable<bool> CanMoveBack { get; }
+    
     public ObservableCollection<Player> TransparentPlayers { get; } = new();
+    
     public ObservableCollection<Player> BlackPlayers { get; } = new();
+    
     public ObservableCollection<Player> RedPlayers { get; } = new();
 
     public Player? DraggingPlayer
@@ -52,14 +41,24 @@ public sealed class TeamsConfigViewModel : Page
         get => _draggingPlayer;
         private set => this.RaiseAndSetIfChanged(ref _draggingPlayer, value);
     }
-
-    public bool ReadyForward
-    {
-        get => _readyForward;
-        set => this.RaiseAndSetIfChanged(ref _readyForward, value);
-    }
     
     #endregion
+    
+    public TeamsConfigViewModel()
+    {
+        Header = new TeamsConfigHeader(this); // Remember about player NICKNAME CHANGE
+        
+        // Permanent true
+        CanMoveBack = this.WhenAnyValue(property1: vm => vm.Header, selector: h => h is TeamsConfigHeader);
+        CanMoveForward = TransparentPlayers.WhenAnyValue(x => x.Count, count => count == 0);
+
+        Statistic.Players.CountChanged
+            .Subscribe(x =>
+            {
+                Console.WriteLine("Amount of players changed to {0}", x);
+                CountChanged();
+            });
+    }
     
     #region + Commands +
     

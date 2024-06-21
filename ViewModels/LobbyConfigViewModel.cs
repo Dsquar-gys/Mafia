@@ -16,20 +16,17 @@ namespace Mafia.ViewModels
         private int _indexer;
 
         #endregion
-
-        public LobbyConfigViewModel()
-        {
-            Header = new LobbyConfigHeader(this);
-
-            Statistic.Players.Connect()
-                .Bind(Players)
-                .Subscribe();
-        }
         
         #region + Properties +
 
         public override HeaderTemplateBase Header { get; init; }
+
+        public override IObservable<bool> CanMoveForward { get; }
+        
+        public override IObservable<bool> CanMoveBack { get; }
+        
         public IObservableCollection<Player> Players { get; } = new ObservableCollectionExtended<Player>();
+        
         private string GetRandomName
         {
             get
@@ -49,6 +46,19 @@ namespace Mafia.ViewModels
         }
         
         #endregion
+        
+        public LobbyConfigViewModel()
+        {
+            Header = new LobbyConfigHeader(this);
+            
+            // Permanent true
+            CanMoveBack = this.WhenAnyValue(property1: vm => vm.Header, selector: header => header is LobbyConfigHeader);
+            CanMoveForward = Players.WhenAnyValue(x => x.Count, count => count >= 6);
+
+            Statistic.Players.Connect()
+                .Bind(Players)
+                .Subscribe();
+        }
         
         #region + Commands +
 
