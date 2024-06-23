@@ -150,14 +150,17 @@
 					</StackPanel>
 					
 					<!-- Candidates -->
-					<StackPanel Grid.Row="2"
-					            Spacing="5">
+					<Grid Grid.Row="2"
+					      RowDefinitions="Auto, *">
 						
-						<TextBlock Foreground="White"
+						<TextBlock Grid.Row="0"
+						           Foreground="White"
 						           TextAlignment="Center"
-						           Text="Nominated players"/>
+						           Text="Nominated players"
+						           Margin="0, 5"/>
 						
-						<ListBox ItemsSource="{Binding NominatedPlayers}">
+						<ListBox Grid.Row="1"
+						         ItemsSource="{Binding NominatedPlayers}">
 							<ListBox.ItemTemplate>
 								<DataTemplate>
 									<Border Background="White"
@@ -199,7 +202,7 @@
 							</ListBox.Styles>
 						
 						</ListBox>
-					</StackPanel>
+					</Grid>
 					
 				</Grid>
 			</Grid>

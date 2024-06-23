@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Timers;
 using DynamicData;
 using Mafia.Headers;
@@ -25,6 +26,11 @@ public sealed class RoundViewModel : Page
     /// Subscription to skip current player on IsMuted changed true
     /// </summary>
     private IDisposable _skipSubscription;
+
+    /// <summary>
+    /// Dispose all players` nomination subscriptions
+    /// </summary>
+    private readonly CompositeDisposable _nominationSub = new();
     
     #endregion
 
@@ -56,8 +62,6 @@ public sealed class RoundViewModel : Page
     
     public ObservableCollection<Player> Players { get; } = new();
     
-    public ObservableCollection<Player> SpeakablePlayers { get; } = new();
-    
     public ObservableCollection<Player> NominatedPlayers { get; } = new();
 
     public Player? CurrentPlayer
@@ -86,10 +90,17 @@ public sealed class RoundViewModel : Page
             .Subscribe(_ =>
             {
                 Players.Clear();
-                SpeakablePlayers.Clear();
-                
                 Players.AddRange(Statistic.Players.Items);
-                SpeakablePlayers.AddRange(Players);
+                
+                foreach (var player in Players)
+                {
+                    player.WhenAnyValue(p => p.IsNominated)
+                        .Subscribe(nominated =>
+                        {
+                            if (nominated && ! NominatedPlayers.Contains(player)) NominatedPlayers.Add(player);
+                        })
+                        .DisposeWith(_nominationSub);
+                }
 
                 _speechIteration = 0;
                 CurrentPlayer = Players.FirstOrDefault();
@@ -132,6 +143,15 @@ public sealed class RoundViewModel : Page
         // Change time display each second
         this.WhenAnyValue(x => x.Seconds)
             .Subscribe(x => TimeDisplay = $"{x / 60}:{x % 60}");
+
+        EndSessionCommand = ReactiveCommand.Create<GameOver>(gameOver =>
+        {
+            Statistic.CreateReport(gameOver);
+
+            // TODO Reset session
+
+            _nominationSub.Dispose();
+        });
     }
 
     #region + Commands +
@@ -148,34 +168,28 @@ public sealed class RoundViewModel : Page
             NominatedPlayers.Add(player);
     });
     
-    public ReactiveCommand<Player, Unit> KickPlayer => ReactiveCommand.Create<Player>(player =>
-    {
-        if (SpeakablePlayers.Remove(player))
-        {
-            player.IsKickedOut = true;
-            --_speechIteration;
-        }
-
-        var state = CheckGameOver();
-        switch (state)
-        {
-            case GameOver.None:
-                return;
-            case GameOver.RedWins:
-            case GameOver.BlackWins:
-            default:
-                EndSessionCommand.Execute(state).Subscribe();
-                return;
-        }
-    });
+    // public ReactiveCommand<Player, Unit> KickPlayer => ReactiveCommand.Create<Player>(player =>
+    // {
+    //     if (SpeakablePlayers.Remove(player))
+    //     {
+    //         player.IsKickedOut = true;
+    //         --_speechIteration;
+    //     }
+    //
+    //     var state = CheckGameOver();
+    //     switch (state)
+    //     {
+    //         case GameOver.None:
+    //             return;
+    //         case GameOver.RedWins:
+    //         case GameOver.BlackWins:
+    //         default:
+    //             EndSessionCommand.Execute(state).Subscribe();
+    //             return;
+    //     }
+    // });
     
-    public ReactiveCommand<GameOver, Unit> EndSessionCommand { get; } =
-        ReactiveCommand.Create<GameOver>(gameOver =>
-        {
-            Statistic.CreateReport( gameOver );
-            
-            // TODO Reset session
-        });
+    public ReactiveCommand<GameOver, Unit> EndSessionCommand { get; }
     
     #endregion
     
@@ -186,7 +200,7 @@ public sealed class RoundViewModel : Page
         int nextPersonIndex;
         do
         {
-            nextPersonIndex = ++_speechIteration % SpeakablePlayers.Count;
+            nextPersonIndex = ++_speechIteration % Players.Count;
         } while (Players[nextPersonIndex].IsMuted || Players[nextPersonIndex].IsKickedOut);
 
         return Players[nextPersonIndex];
