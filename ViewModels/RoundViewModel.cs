@@ -21,6 +21,11 @@ public sealed class RoundViewModel : Page
     private Player? _currentPlayer;
     private int _speechIteration;
     
+    /// <summary>
+    /// Subscription to skip current player on IsMuted changed true
+    /// </summary>
+    private IDisposable _skipSubscription;
+    
     #endregion
 
     #region + Properties +
@@ -90,6 +95,21 @@ public sealed class RoundViewModel : Page
                 CurrentPlayer = Players.FirstOrDefault();
             });
         
+        // On current speaker change
+        this.WhenAnyValue(vm => vm.CurrentPlayer)
+            .Subscribe(nextPlayer =>
+            {
+                // Dispose subscription for previous player
+                _skipSubscription?.Dispose();
+                _skipSubscription = nextPlayer.WhenAnyValue(x => x.IsMuted).Subscribe(muted =>
+                {
+                    if ( ! muted ) return;
+                    Paused = true;
+                    Seconds = 0;
+                    CurrentPlayer = GetNextPerson();
+                });
+            });
+        
         // Dependency for timer on Paused prop
         this.WhenAnyValue(x => x.Paused)
             .Subscribe(x =>
@@ -105,7 +125,8 @@ public sealed class RoundViewModel : Page
             {
                 if (!x) return;
                 Paused = x;
-                CurrentPlayer = SpeakablePlayers[++_speechIteration % SpeakablePlayers.Count];
+                // Get next speakable player
+                CurrentPlayer = GetNextPerson();
             });
 
         // Change time display each second
@@ -120,19 +141,6 @@ public sealed class RoundViewModel : Page
         Paused ^= true;
         if (!Paused && Seconds >= 60) Seconds = 0;
     });
-    
-    // public ReactiveCommand<Player, Unit> AddFoul => ReactiveCommand.Create<Player>(player =>
-    // {
-    //     var index = player.Fouls.IndexOf(false);
-    //     player.Fouls[index] = true;
-    //
-    //     if (!player.Fouls.All(x => x)) return;
-    //     SpeakablePlayers.Remove(player);
-    //     --_speechIteration;
-    //
-    //     if (CurrentPlayer != player) return;
-    //     Seconds = 60;
-    // });
     
     public ReactiveCommand<Player, Unit> AddCandidate => ReactiveCommand.Create<Player>(player =>
     {
@@ -173,6 +181,17 @@ public sealed class RoundViewModel : Page
     
     #region Methods
 
+    private Player GetNextPerson()
+    {
+        int nextPersonIndex;
+        do
+        {
+            nextPersonIndex = ++_speechIteration % SpeakablePlayers.Count;
+        } while (Players[nextPersonIndex].IsMuted || Players[nextPersonIndex].IsKickedOut);
+
+        return Players[nextPersonIndex];
+    }
+        
     private GameOver CheckGameOver()
     {
         var alive = Players.Where(x => !x.IsKickedOut).ToArray();
@@ -181,9 +200,7 @@ public sealed class RoundViewModel : Page
         if (mafias.Length == 0) return GameOver.RedWins;
         
         var peasants = alive.Except(mafias).ToArray();
-        if (peasants.Length <= mafias.Length) return GameOver.BlackWins;
-
-        return GameOver.None;
+        return peasants.Length <= mafias.Length ? GameOver.BlackWins : GameOver.None;
     }
     
     #endregion

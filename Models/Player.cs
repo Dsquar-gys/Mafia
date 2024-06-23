@@ -11,6 +11,16 @@ public class Player : ReactiveObject
     private GameRole _role;
     private int _fouls;
 
+    private bool _isMuted;
+    private bool _isNominated;
+    private bool _isKickedOut;
+
+    private int Fouls
+    {
+        get => _fouls;
+        set => this.RaiseAndSetIfChanged(ref _fouls, value);
+    }
+
     public int Position
     {
         get => _position;
@@ -30,22 +40,36 @@ public class Player : ReactiveObject
     }
     
     public bool IsActiveRole => _role is GameRole.Detective or GameRole.Don;
-    public bool IsKickedOut { get; set; } = false;
-    public bool IsMuted { get; private set; }
-    public bool IsNominated { get; set; } = false;
+
+    public bool IsKickedOut
+    {
+        get => _isKickedOut;
+        set => this.RaiseAndSetIfChanged(ref _isKickedOut, value);
+    }
+
+    public bool IsMuted
+    {
+        get => _isMuted;
+        private set => this.RaiseAndSetIfChanged(ref _isMuted, value);
+    }
+
+    public bool IsNominated
+    {
+        get => _isNominated;
+        set => this.RaiseAndSetIfChanged(ref _isNominated, value);
+    }
 
     public Player(int position, string name)
     {
         _position = position;
         _nickname = name;
         _role = GameRole.None;
-        _fouls = 0;
 
-        this.WhenAnyValue(pl => pl._fouls, fouls => fouls >= 3)
+        this.WhenAnyValue(pl => pl.Fouls, fouls => fouls >= 3)
             .Subscribe(x => IsMuted = x);
     }
 
-    public ReactiveCommand<Unit, Unit> SetFoulCommand => ReactiveCommand.Create(() => { _fouls++; });
+    public ReactiveCommand<Unit, Unit> SetFoulCommand => ReactiveCommand.Create(() => { Fouls++; });
     public ReactiveCommand<Unit, Unit> NominateCommand => ReactiveCommand.Create(() => { IsNominated = true; });
     public ReactiveCommand<Unit, Unit> KickCommand => ReactiveCommand.Create(() => { IsKickedOut = true; });
     
