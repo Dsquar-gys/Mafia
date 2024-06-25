@@ -3,11 +3,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:Mafia.ViewModels"
+             xmlns:models="clr-namespace:Mafia.Models"
+             xmlns:converters="clr-namespace:Mafia.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Mafia.Views.RoundView"
              x:DataType="viewModels:RoundViewModel">
-    
-    <Design.DataContext>
+
+	<UserControl.Resources>
+		<converters:AliveColorBrushConverter x:Key="AliveColorBrushConverter" />
+	</UserControl.Resources>
+	<Design.DataContext>
         <viewModels:RoundViewModel />
     </Design.DataContext>
     
@@ -17,7 +22,7 @@
 			<Grid>
                 
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*" MinWidth="200" />
+					<ColumnDefinition Width="*" MinWidth="600" />
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="Auto" MinWidth="200" />
 				</Grid.ColumnDefinitions>
@@ -44,13 +49,13 @@
 						<DataTemplate>
 							<Grid ColumnDefinitions="*, Auto">
 								<Border Grid.Column="0"
-								        Background="White"
+								        Background="{Binding IsKickedOut, Converter={StaticResource AliveColorBrushConverter}}"
 								        Padding="10"
 								        Margin="0,5"
 								        CornerRadius="10">
 									<Grid ColumnDefinitions="Auto, Auto, *, Auto">
 										<TextBlock Grid.Column="0"
-										           Text="{Binding Position, Converter={StaticResource IntegerConverter}}"
+										           Text="{Binding Position}"
 										           VerticalAlignment="Center"
 										           Margin="8,0"/>
 										<TextBlock Grid.Column="1"
@@ -95,7 +100,7 @@
 									</Grid>
 								</Border>
 								<Border Grid.Column="1"
-								        Background="White"
+								        Background="{Binding IsKickedOut, Converter={StaticResource AliveColorBrushConverter}}"
 								        Padding="10"
 								        Margin="10,5"
 								        CornerRadius="10">
@@ -112,6 +117,9 @@
 						<!--  Selected state  -->
 						<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
 							<Setter Property="Background" Value="LightSteelBlue" />
+						</Style>
+						<Style Selector="ListBoxItem">
+							<Setter Property="IsEnabled" Value="{Binding !IsKickedOut, DataType=models:Player}" />
 						</Style>
 						
 					</ListBox.Styles>
@@ -170,7 +178,7 @@
 									
 										<Grid ColumnDefinitions="Auto, Auto, *">
 											<TextBlock Grid.Column="0"
-											           Text="{Binding Position, Converter={StaticResource IntegerConverter}}"
+											           Text="{Binding Position}"
 											           VerticalAlignment="Center"
 											           Margin="8,0"/>
 											<TextBlock Grid.Column="1"
@@ -184,7 +192,7 @@
 												
 												<Interaction.Behaviors>
 													<EventTriggerBehavior EventName="Click">
-														<ChangePropertyAction PropertyName="IsKickedOut" Value="true" />
+														<ChangePropertyAction TargetObject="{Binding .}" PropertyName="IsKickedOut" Value="true" />
 													</EventTriggerBehavior>
 												</Interaction.Behaviors>
 												

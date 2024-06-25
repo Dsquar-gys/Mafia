@@ -56,7 +56,7 @@
                                             PointerPressed="OnPointerPressed">
                                         <Grid ColumnDefinitions="*, *">
                                             <TextBlock Grid.Column="0"
-                                                       Text="{Binding Position, Converter={StaticResource IntegerConverter}}"
+                                                       Text="{Binding Position}"
                                                        Margin="8,0"/>
                                             <TextBlock Grid.Column="1"
                                                        Text="{Binding Nickname}"
@@ -89,7 +89,7 @@
                             
                             <ItemsRepeater.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="{StaticResource Burgundy}"
+                                    <Border Background="{StaticResource DarkRed}"
                                             Padding="10"
                                             CornerRadius="10"
                                             PointerPressed="OnPointerPressed">
@@ -97,7 +97,7 @@
                                             <TextBlock Grid.Column="0"
                                                        VerticalAlignment="Center"
                                                        Foreground="White"
-                                                       Text="{Binding Position, Converter={StaticResource IntegerConverter}}"
+                                                       Text="{Binding Position}"
                                                        Margin="8,0"/>
                                             <RadioButton Grid.Column="1"
                                                          VerticalAlignment="Center"
@@ -156,7 +156,7 @@
                                             <TextBlock Grid.Column="0"
                                                        Foreground="White"
                                                        VerticalAlignment="Center"
-                                                       Text="{Binding Position, Converter={StaticResource IntegerConverter}}"
+                                                       Text="{Binding Position}"
                                                        Margin="8,0"/>
                                             <RadioButton Grid.Column="1"
                                                          VerticalAlignment="Center"
@@ -170,7 +170,7 @@
                                                         <Setter Property="Foreground" Value="White" />
                                                         
                                                         <Style Selector="^:checked">
-                                                            <Setter Property="Foreground" Value="{StaticResource Burgundy}"/>
+                                                            <Setter Property="Foreground" Value="{StaticResource DarkRed}"/>
                                                         </Style>
                                                     </Style>
                                                 </RadioButton.Styles>
@@ -213,7 +213,6 @@
             <Grid ColumnDefinitions="*, *">
                 <TextBlock Grid.Column="0"
                            Text="{Binding DraggingPlayer.Position,
-                                Converter={StaticResource IntegerConverter},
                                 FallbackValue='0'}"
                            Margin="8,0"/>
                 <TextBlock Grid.Column="1"

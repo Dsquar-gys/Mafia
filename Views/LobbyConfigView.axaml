@@ -35,7 +35,7 @@
 							        Background="White"
 							        Margin="10">
 								<StackPanel Orientation="Horizontal">
-									<TextBlock Text="{Binding Position, Converter={StaticResource IntegerConverter}}"
+									<TextBlock Text="{Binding Position}"
 									           VerticalAlignment="Center"
 									           Margin="15, 0, 10, 0"
 									           Width="15"/>

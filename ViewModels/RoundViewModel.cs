@@ -17,7 +17,7 @@ public sealed class RoundViewModel : Page
     
     private bool _paused = true;
     private int _seconds;
-    private string _timeDisplay;
+    private string? _timeDisplay;
     private readonly Timer _secondTimer = new();
     private Player? _currentPlayer;
     private int _speechIteration;
@@ -25,7 +25,7 @@ public sealed class RoundViewModel : Page
     /// <summary>
     /// Subscription to skip current player on IsMuted changed true
     /// </summary>
-    private IDisposable _skipSubscription;
+    private IDisposable? _skipSubscription;
 
     /// <summary>
     /// Dispose all players` nomination subscriptions
@@ -54,7 +54,7 @@ public sealed class RoundViewModel : Page
         set => this.RaiseAndSetIfChanged(ref _seconds, value);
     }
     
-    public string TimeDisplay
+    public string? TimeDisplay
     {
         get => _timeDisplay;
         set => this.RaiseAndSetIfChanged(ref _timeDisplay, value);
@@ -76,7 +76,7 @@ public sealed class RoundViewModel : Page
     {
         _secondTimer.AutoReset = true;
         _secondTimer.Interval = 100;
-        _secondTimer.Elapsed += (sender, args) => Seconds++;
+        _secondTimer.Elapsed += (_, _) => Seconds++;
 
         Header = new RoundHeader(this);
 
@@ -100,6 +100,13 @@ public sealed class RoundViewModel : Page
                             if (nominated && ! NominatedPlayers.Contains(player)) NominatedPlayers.Add(player);
                         })
                         .DisposeWith(_nominationSub);
+
+                    player.WhenAnyValue(p => p.IsKickedOut)
+                        .Subscribe(kicked =>
+                        {
+                            if (kicked && NominatedPlayers.Contains(player))
+                                NominatedPlayers.Remove(player);
+                        });
                 }
 
                 _speechIteration = 0;
@@ -160,12 +167,6 @@ public sealed class RoundViewModel : Page
     {
         Paused ^= true;
         if (!Paused && Seconds >= 60) Seconds = 0;
-    });
-    
-    public ReactiveCommand<Player, Unit> AddCandidate => ReactiveCommand.Create<Player>(player =>
-    {
-        if ( ! NominatedPlayers.Contains(player))
-            NominatedPlayers.Add(player);
     });
     
     // public ReactiveCommand<Player, Unit> KickPlayer => ReactiveCommand.Create<Player>(player =>
