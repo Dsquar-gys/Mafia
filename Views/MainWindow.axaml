@@ -72,6 +72,9 @@
 					<Setter Property="Background" Value="Transparent" />
 					<Setter Property="MaxHeight" Value="{StaticResource HeaderHeight}" />
 				</Style>
+				<Style Selector="Button.System[IsEffectivelyEnabled=False] > Image">
+					<Setter Property="Opacity" Value="0.4" />
+				</Style>
 			</Grid.Styles>
 			
 		</Grid>
