@@ -152,23 +152,15 @@ public sealed class RoundViewModel : Page
 
                 _firstSpeaker = Players.FirstOrDefault(x => x is { IsMuted: false, IsKickedOut: false });
                 CurrentPlayer = _firstSpeaker;
+                
+                Stage = GameStage.Day;
+                Round = 0;
             });
         
         // On current speaker change
         this.WhenAnyValue(vm => vm.CurrentPlayer)
             .Subscribe(nextPlayer =>
             {
-                // if (CurrentPlayer != null && nextPlayer != null)
-                // {
-                //     // Means that we jumped to first speakable Player
-                //     if (_prevPlayerPosition > nextPlayer.Position)
-                //     {
-                //         SwitchStage();
-                //     }
-                //
-                //     _prevPlayerPosition = nextPlayer.Position;
-                // }
-
                 if (nextPlayer == _firstSpeaker && _firstSpeaker != null)
                 {
                     SwitchStage();
