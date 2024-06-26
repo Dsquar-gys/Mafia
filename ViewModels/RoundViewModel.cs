@@ -5,6 +5,7 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Timers;
 using DynamicData;
+using DynamicData.Binding;
 using Mafia.Headers;
 using Mafia.Models;
 using ReactiveUI;
@@ -21,6 +22,8 @@ public sealed class RoundViewModel : Page
     private readonly Timer _secondTimer = new();
     private Player? _currentPlayer;
     private int _speechIteration;
+    private GameStage _stage;
+    private int _prevPlayerPosition;
     
     /// <summary>
     /// Subscription to skip current player on IsMuted changed true
@@ -30,7 +33,7 @@ public sealed class RoundViewModel : Page
     /// <summary>
     /// Dispose all players` nomination subscriptions
     /// </summary>
-    private readonly CompositeDisposable _nominationSub = new();
+    private CompositeDisposable _nominationSub = new();
     
     #endregion
 
@@ -59,7 +62,27 @@ public sealed class RoundViewModel : Page
         get => _timeDisplay;
         set => this.RaiseAndSetIfChanged(ref _timeDisplay, value);
     }
-    
+
+    public GameStage Stage
+    {
+        get => _stage;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _stage, value);
+            
+            this.RaisePropertyChanged(nameof(VoteStagePermission));
+            this.RaisePropertyChanged(nameof(NightStagePermission));
+            this.RaisePropertyChanged(nameof(DayStagePermission));
+            this.RaisePropertyChanged(nameof(SkipEnabled));
+        }
+    }
+
+    public bool VoteStagePermission => _stage is GameStage.Vote;
+    public bool NightStagePermission => _stage is GameStage.Night;
+    public bool DayStagePermission => _stage is GameStage.Day;
+
+    public bool SkipEnabled => _stage is not GameStage.Day;
+
     public ObservableCollection<Player> Players { get; } = new();
     
     public ObservableCollection<Player> NominatedPlayers { get; } = new();
@@ -75,7 +98,7 @@ public sealed class RoundViewModel : Page
     public RoundViewModel()
     {
         _secondTimer.AutoReset = true;
-        _secondTimer.Interval = 100;
+        _secondTimer.Interval = 50;
         _secondTimer.Elapsed += (_, _) => Seconds++;
 
         Header = new RoundHeader(this);
@@ -91,6 +114,9 @@ public sealed class RoundViewModel : Page
             {
                 Players.Clear();
                 Players.AddRange(Statistic.Players.Items);
+                
+                _nominationSub.Dispose();
+                _nominationSub = new();
                 
                 foreach (var player in Players)
                 {
@@ -117,6 +143,17 @@ public sealed class RoundViewModel : Page
         this.WhenAnyValue(vm => vm.CurrentPlayer)
             .Subscribe(nextPlayer =>
             {
+                if (CurrentPlayer != null && nextPlayer != null)
+                {
+                    // Means that we jumped to first speakable Player
+                    if (_prevPlayerPosition > nextPlayer.Position)
+                    {
+                        SwitchStage();
+                    }
+
+                    _prevPlayerPosition = nextPlayer.Position;
+                }
+                
                 // Dispose subscription for previous player
                 _skipSubscription?.Dispose();
                 _skipSubscription = nextPlayer.WhenAnyValue(x => x.IsMuted).Subscribe(muted =>
@@ -151,44 +188,29 @@ public sealed class RoundViewModel : Page
         this.WhenAnyValue(x => x.Seconds)
             .Subscribe(x => TimeDisplay = $"{x / 60}:{x % 60}");
 
+        Players.ToObservableChangeSet()
+            .WhenPropertyChanged(x => x.IsKickedOut)
+            .Subscribe(_ => SwitchStage());
+
         EndSessionCommand = ReactiveCommand.Create<GameOver>(gameOver =>
         {
             Statistic.CreateReport(gameOver);
-
+        
             // TODO Reset session
-
+        
             _nominationSub.Dispose();
         });
     }
 
     #region + Commands +
 
-    public ReactiveCommand<Unit, Unit> SwitchTimer => ReactiveCommand.Create(() =>
+    public ReactiveCommand<Unit, Unit> SwitchTimerCommand => ReactiveCommand.Create(() =>
     {
         Paused ^= true;
         if (!Paused && Seconds >= 60) Seconds = 0;
     });
-    
-    // public ReactiveCommand<Player, Unit> KickPlayer => ReactiveCommand.Create<Player>(player =>
-    // {
-    //     if (SpeakablePlayers.Remove(player))
-    //     {
-    //         player.IsKickedOut = true;
-    //         --_speechIteration;
-    //     }
-    //
-    //     var state = CheckGameOver();
-    //     switch (state)
-    //     {
-    //         case GameOver.None:
-    //             return;
-    //         case GameOver.RedWins:
-    //         case GameOver.BlackWins:
-    //         default:
-    //             EndSessionCommand.Execute(state).Subscribe();
-    //             return;
-    //     }
-    // });
+
+    public ReactiveCommand<Unit, Unit> SwitchStageCommand => ReactiveCommand.Create(SwitchStage);
     
     public ReactiveCommand<GameOver, Unit> EndSessionCommand { get; }
     
@@ -206,7 +228,9 @@ public sealed class RoundViewModel : Page
 
         return Players[nextPersonIndex];
     }
-        
+
+    private void SwitchStage() => Stage = (GameStage)((int)(Stage + 1) % Enum.GetValues(typeof(GameStage)).Length);
+    
     private GameOver CheckGameOver()
     {
         var alive = Players.Where(x => !x.IsKickedOut).ToArray();

@@ -19,7 +19,7 @@
                     Orientation="Horizontal"
                     Spacing="20">
             <Border Padding="5"
-                    Background="{StaticResource DarkBlue}"
+                    Background="{StaticResource Golden}"
                     CornerRadius="5">
                 <ScrollViewer HorizontalScrollBarVisibility="Hidden"
                               MaxWidth="200">
@@ -29,11 +29,18 @@
                                Text="{Binding Source={x:Static models:Statistic.MasterNameProperty}}"/>
                 </ScrollViewer>
             </Border>
+            
+            <TextBlock Foreground="White"
+                       VerticalAlignment="Center"
+                       Text="{Binding Parent.Stage}"/>
         </StackPanel>
 			
         <Label Grid.Column="1"
-               HorizontalAlignment="Center">Round</Label>
-			
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               Foreground="White"
+               Content="Round"/>
+        
         <Button Grid.Column="2"
                 Content="End session"
                 Command="{Binding Parent.EndSessionCommand}"

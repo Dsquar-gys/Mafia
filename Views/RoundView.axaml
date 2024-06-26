@@ -5,6 +5,7 @@
              xmlns:viewModels="clr-namespace:Mafia.ViewModels"
              xmlns:models="clr-namespace:Mafia.Models"
              xmlns:converters="clr-namespace:Mafia.Converters"
+             xmlns:views="clr-namespace:Mafia.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Mafia.Views.RoundView"
              x:DataType="viewModels:RoundViewModel">
@@ -95,6 +96,7 @@
 										<Button Grid.Column="3"
 										        Content="Kill"
 										        Classes="Danger"
+										        IsEnabled="{Binding $parent[views:RoundView].((viewModels:RoundViewModel)DataContext).NightStagePermission, FallbackValue=false}"
 										        Command="{Binding KickCommand}" />
 										
 									</Grid>
@@ -106,6 +108,7 @@
 								        CornerRadius="10">
 									<RadioButton VerticalAlignment="Center"
 									             Content="Nominated"
+									             IsEnabled="{Binding $parent[views:RoundView].((viewModels:RoundViewModel)DataContext).DayStagePermission, FallbackValue=false}"
 									             Command="{Binding NominateCommand}" />
 								</Border>
 							</Grid>
@@ -154,7 +157,13 @@
 						        Classes="Success"
 						        Name="PlayPause"
 						        Content="Play"
-						        Command="{Binding SwitchTimer}"/>
+						        IsEnabled="{Binding $parent[views:RoundView].((viewModels:RoundViewModel)DataContext).DayStagePermission, FallbackValue=false}"
+						        Command="{Binding SwitchTimerCommand}"/>
+						<Button Theme="{DynamicResource SolidButton}"
+						        Classes="Secondary"
+						        Content="Skip"
+						        IsEnabled="{Binding $parent[views:RoundView].((viewModels:RoundViewModel)DataContext).SkipEnabled, FallbackValue=false}"
+						        Command="{Binding SwitchStageCommand}"/>
 					</StackPanel>
 					
 					<!-- Candidates -->
@@ -188,6 +197,7 @@
 											<Button Grid.Column="2"
 											        HorizontalAlignment="Right"
 											        Content="Kick"
+											        IsEnabled="{Binding $parent[views:RoundView].((viewModels:RoundViewModel)DataContext).VoteStagePermission, FallbackValue=false}"
 											        Classes="Danger">
 												
 												<Interaction.Behaviors>
