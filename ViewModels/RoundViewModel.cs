@@ -21,9 +21,10 @@ public sealed class RoundViewModel : Page
     private string? _timeDisplay;
     private readonly Timer _secondTimer = new();
     private Player? _currentPlayer;
-    private int _speechIteration;
     private GameStage _stage;
-    private int _prevPlayerPosition;
+    private int _round;
+
+    private Player? _firstSpeaker;
     
     /// <summary>
     /// Subscription to skip current player on IsMuted changed true
@@ -63,6 +64,12 @@ public sealed class RoundViewModel : Page
         set => this.RaiseAndSetIfChanged(ref _timeDisplay, value);
     }
 
+    public int Round
+    {
+        get => _round;
+        set => this.RaiseAndSetIfChanged(ref _round, value);
+    }
+    
     public GameStage Stage
     {
         get => _stage;
@@ -133,25 +140,38 @@ public sealed class RoundViewModel : Page
                             if (kicked && NominatedPlayers.Contains(player))
                                 NominatedPlayers.Remove(player);
                         });
+
+                    player.WhenAnyValue(p => p.IsMuted)
+                        .Subscribe(muted =>
+                        {
+                            if (!muted) return;
+
+                            if (player == _firstSpeaker) _firstSpeaker = GetNextPerson(_firstSpeaker.Position);
+                        });
                 }
 
-                _speechIteration = 0;
-                CurrentPlayer = Players.FirstOrDefault();
+                _firstSpeaker = Players.FirstOrDefault(x => x is { IsMuted: false, IsKickedOut: false });
+                CurrentPlayer = _firstSpeaker;
             });
         
         // On current speaker change
         this.WhenAnyValue(vm => vm.CurrentPlayer)
             .Subscribe(nextPlayer =>
             {
-                if (CurrentPlayer != null && nextPlayer != null)
-                {
-                    // Means that we jumped to first speakable Player
-                    if (_prevPlayerPosition > nextPlayer.Position)
-                    {
-                        SwitchStage();
-                    }
+                // if (CurrentPlayer != null && nextPlayer != null)
+                // {
+                //     // Means that we jumped to first speakable Player
+                //     if (_prevPlayerPosition > nextPlayer.Position)
+                //     {
+                //         SwitchStage();
+                //     }
+                //
+                //     _prevPlayerPosition = nextPlayer.Position;
+                // }
 
-                    _prevPlayerPosition = nextPlayer.Position;
+                if (nextPlayer == _firstSpeaker && _firstSpeaker != null)
+                {
+                    SwitchStage();
                 }
                 
                 // Dispose subscription for previous player
@@ -161,9 +181,12 @@ public sealed class RoundViewModel : Page
                     if ( ! muted ) return;
                     Paused = true;
                     Seconds = 0;
-                    CurrentPlayer = GetNextPerson();
+                    CurrentPlayer = GetNextPerson(CurrentPlayer!.Position);
                 });
             });
+
+        this.WhenAnyValue(vm => vm.Stage)
+            .Subscribe(stage => Round = stage is GameStage.Day ? Round + 1 : Round);
         
         // Dependency for timer on Paused prop
         this.WhenAnyValue(x => x.Paused)
@@ -181,7 +204,7 @@ public sealed class RoundViewModel : Page
                 if (!x) return;
                 Paused = x;
                 // Get next speakable player
-                CurrentPlayer = GetNextPerson();
+                CurrentPlayer = GetNextPerson(CurrentPlayer!.Position);
             });
 
         // Change time display each second
@@ -192,14 +215,8 @@ public sealed class RoundViewModel : Page
             .WhenPropertyChanged(x => x.IsKickedOut)
             .Subscribe(_ => SwitchStage());
 
-        EndSessionCommand = ReactiveCommand.Create<GameOver>(gameOver =>
-        {
-            Statistic.CreateReport(gameOver);
-        
-            // TODO Reset session
-        
-            _nominationSub.Dispose();
-        });
+        SwitchStageCommand = ReactiveCommand.Create(SwitchStage);
+        EndSessionCommand = ReactiveCommand.Create<GameOver>(EndSession);
     }
 
     #region + Commands +
@@ -210,7 +227,7 @@ public sealed class RoundViewModel : Page
         if (!Paused && Seconds >= 60) Seconds = 0;
     });
 
-    public ReactiveCommand<Unit, Unit> SwitchStageCommand => ReactiveCommand.Create(SwitchStage);
+    public ReactiveCommand<Unit, Unit> SwitchStageCommand { get; }
     
     public ReactiveCommand<GameOver, Unit> EndSessionCommand { get; }
     
@@ -218,18 +235,24 @@ public sealed class RoundViewModel : Page
     
     #region Methods
 
-    private Player GetNextPerson()
+    private Player? GetNextPerson(int startFromPosition)
     {
+        // To avoid crush on all players muted
+        var crushIterator = 0;
+        
         int nextPersonIndex;
         do
         {
-            nextPersonIndex = ++_speechIteration % Players.Count;
-        } while (Players[nextPersonIndex].IsMuted || Players[nextPersonIndex].IsKickedOut);
-
-        return Players[nextPersonIndex];
+            nextPersonIndex = startFromPosition++ % Players.Count;
+        } while ((Players[nextPersonIndex].IsMuted || Players[nextPersonIndex].IsKickedOut) && ++crushIterator < Players.Count );
+        
+        return crushIterator == Players.Count * 2 ? null : Players[nextPersonIndex];
     }
 
-    private void SwitchStage() => Stage = (GameStage)((int)(Stage + 1) % Enum.GetValues(typeof(GameStage)).Length);
+    private void SwitchStage()
+    {
+        Stage = (GameStage)((int)(Stage + 1) % Enum.GetValues(typeof(GameStage)).Length);
+    }
     
     private GameOver CheckGameOver()
     {
@@ -240,6 +263,15 @@ public sealed class RoundViewModel : Page
         
         var peasants = alive.Except(mafias).ToArray();
         return peasants.Length <= mafias.Length ? GameOver.BlackWins : GameOver.None;
+    }
+
+    private void EndSession(GameOver gameOver)
+    {
+        Statistic.CreateReport(gameOver);
+        
+        // TODO Reset session
+        
+        _nominationSub.Dispose();
     }
     
     #endregion

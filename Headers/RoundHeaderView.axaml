@@ -33,6 +33,9 @@
             <TextBlock Foreground="White"
                        VerticalAlignment="Center"
                        Text="{Binding Parent.Stage}"/>
+            <TextBlock Foreground="White"
+                       VerticalAlignment="Center"
+                       Text="{Binding Parent.Round}"/>
         </StackPanel>
 			
         <Label Grid.Column="1"

@@ -11,7 +11,7 @@
              x:DataType="viewModels:RoundViewModel">
 
 	<UserControl.Resources>
-		<converters:AliveColorBrushConverter x:Key="AliveColorBrushConverter" />
+		<converters:RoleColorBrushConverter x:Key="RoleColorBrushConverter" />
 	</UserControl.Resources>
 	<Design.DataContext>
         <viewModels:RoundViewModel />
@@ -50,7 +50,7 @@
 						<DataTemplate>
 							<Grid ColumnDefinitions="*, Auto">
 								<Border Grid.Column="0"
-								        Background="{Binding IsKickedOut, Converter={StaticResource AliveColorBrushConverter}}"
+								        Background="{Binding Role, Converter={StaticResource RoleColorBrushConverter}}"
 								        Padding="10"
 								        Margin="0,5"
 								        CornerRadius="10">
@@ -102,7 +102,7 @@
 									</Grid>
 								</Border>
 								<Border Grid.Column="1"
-								        Background="{Binding IsKickedOut, Converter={StaticResource AliveColorBrushConverter}}"
+								        Background="White"
 								        Padding="10"
 								        Margin="10,5"
 								        CornerRadius="10">
@@ -123,6 +123,9 @@
 						</Style>
 						<Style Selector="ListBoxItem">
 							<Setter Property="IsEnabled" Value="{Binding !IsKickedOut, DataType=models:Player}" />
+						</Style>
+						<Style Selector="ListBoxItem[IsEnabled=False]">
+							<Setter Property="Opacity" Value="0.5" />
 						</Style>
 						
 					</ListBox.Styles>
