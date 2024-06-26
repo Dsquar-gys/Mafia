@@ -23,7 +23,7 @@
 			<Grid>
                 
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*" MinWidth="600" />
+					<ColumnDefinition Width="*" MinWidth="670" />
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="Auto" MinWidth="200" />
 				</Grid.ColumnDefinitions>
@@ -50,11 +50,11 @@
 						<DataTemplate>
 							<Grid ColumnDefinitions="*, Auto">
 								<Border Grid.Column="0"
-								        Background="{Binding Role, Converter={StaticResource RoleColorBrushConverter}}"
+								        Background="White"
 								        Padding="10"
 								        Margin="0,5"
 								        CornerRadius="10">
-									<Grid ColumnDefinitions="Auto, Auto, *, Auto">
+									<Grid ColumnDefinitions="Auto, *, *, 2*, Auto">
 										<TextBlock Grid.Column="0"
 										           Text="{Binding Position}"
 										           VerticalAlignment="Center"
@@ -62,8 +62,17 @@
 										<TextBlock Grid.Column="1"
 										           Text="{Binding Nickname}"
 										           VerticalAlignment="Center"
-										           HorizontalAlignment="Center"/>
-										<ListBox Grid.Column="2"
+										           HorizontalAlignment="Left"/>
+										<Border Grid.Column="2"
+										        CornerRadius="10"
+										        Padding="10"
+										        HorizontalAlignment="Left"
+										        VerticalAlignment="Center"
+										        Background="{Binding Role, Converter={StaticResource RoleColorBrushConverter}}">
+											<TextBlock Text="{Binding Role}"
+											           Foreground="White"/>
+										</Border>
+										<ListBox Grid.Column="3"
 										         Theme="{DynamicResource CheckGroupListBox}"
 										         HorizontalAlignment="Right"
 										         VerticalAlignment="Center"
@@ -93,7 +102,7 @@
 											</ListBox.Styles>
 										
 										</ListBox>
-										<Button Grid.Column="3"
+										<Button Grid.Column="4"
 										        Content="Kill"
 										        Classes="Danger"
 										        IsEnabled="{Binding $parent[views:RoundView].((viewModels:RoundViewModel)DataContext).NightStagePermission, FallbackValue=false}"

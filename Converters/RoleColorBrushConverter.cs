@@ -18,10 +18,10 @@ public class RoleColorBrushConverter : IValueConverter
 
         return role switch
         {
-            GameRole.Peasant => new SolidColorBrush(Color.FromRgb(200, 180, 180)),
-            GameRole.Detective => new SolidColorBrush(Color.FromRgb(180, 180, 200)),
-            GameRole.Mafia => new SolidColorBrush(Color.FromRgb(200, 200, 180)),
-            GameRole.Don => new SolidColorBrush(Color.FromRgb(200, 200, 160)),
+            GameRole.Peasant => new SolidColorBrush(Color.FromArgb(255, 139, 0, 0)),
+            GameRole.Detective => new SolidColorBrush(Color.FromArgb(255, 59, 70, 91)),
+            GameRole.Mafia => new SolidColorBrush(Color.FromArgb(255, 105, 105, 105)),
+            GameRole.Don => new SolidColorBrush(Color.FromArgb(255, 55, 55, 55)),
             _ => new BindingNotification(new InvalidCastException("Invalid Game Role..."), BindingErrorType.Error,
                 new SolidColorBrush(Color.FromRgb(255, 255, 255)))
         };
