@@ -109,7 +109,7 @@
 								        CornerRadius="10">
 									<RadioButton VerticalAlignment="Center"
 									             Content="Nominated"
-									             IsEnabled="{Binding $parent[views:RoundView].((viewModels:RoundViewModel)DataContext).DayStagePermission, FallbackValue=false}"
+									             IsEnabled="{Binding Path=!$parent[views:RoundView].((viewModels:RoundViewModel)DataContext).NightStagePermission, FallbackValue=false}"
 									             Command="{Binding NominateCommand}" />
 								</Border>
 							</Grid>

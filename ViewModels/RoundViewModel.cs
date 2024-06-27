@@ -21,10 +21,9 @@ public sealed class RoundViewModel : Page
     private string? _timeDisplay;
     private readonly Timer _secondTimer = new();
     private Player? _currentPlayer;
+    private Player? _firstSpeaker;
     private GameStage _stage;
     private int _round;
-
-    private Player? _firstSpeaker;
     
     /// <summary>
     /// Subscription to skip current player on IsMuted changed true
@@ -140,32 +139,19 @@ public sealed class RoundViewModel : Page
                             if (kicked && NominatedPlayers.Contains(player))
                                 NominatedPlayers.Remove(player);
                         });
-
-                    player.WhenAnyValue(p => p.IsMuted)
-                        .Subscribe(muted =>
-                        {
-                            if (!muted) return;
-
-                            if (player == _firstSpeaker) _firstSpeaker = GetNextPerson(_firstSpeaker.Position);
-                        });
                 }
 
+                Stage = GameStage.Day;
+                Round = 1;
+                
                 _firstSpeaker = Players.FirstOrDefault(x => x is { IsMuted: false, IsKickedOut: false });
                 CurrentPlayer = _firstSpeaker;
-                
-                Stage = GameStage.Day;
-                Round = 0;
             });
         
         // On current speaker change
         this.WhenAnyValue(vm => vm.CurrentPlayer)
             .Subscribe(nextPlayer =>
             {
-                if (nextPlayer == _firstSpeaker && _firstSpeaker != null)
-                {
-                    SwitchStage();
-                }
-                
                 // Dispose subscription for previous player
                 _skipSubscription?.Dispose();
                 _skipSubscription = nextPlayer.WhenAnyValue(x => x.IsMuted).Subscribe(muted =>
@@ -177,8 +163,18 @@ public sealed class RoundViewModel : Page
                 });
             });
 
+        // Change round number on next day
         this.WhenAnyValue(vm => vm.Stage)
             .Subscribe(stage => Round = stage is GameStage.Day ? Round + 1 : Round);
+
+        this.WhenAnyValue(vm => vm.Round)
+            .Subscribe(round =>
+            {
+                if (Players.Count <= 0 || round <= 0) return;
+                
+                CurrentPlayer = GetNextPerson(_firstSpeaker?.Position ?? 0);
+                _firstSpeaker = Players[(round - 1) % Players.Count];
+            });
         
         // Dependency for timer on Paused prop
         this.WhenAnyValue(x => x.Paused)
@@ -236,6 +232,9 @@ public sealed class RoundViewModel : Page
         do
         {
             nextPersonIndex = startFromPosition++ % Players.Count;
+            
+            // if we passed first speaker --> round is over
+            if (Players[nextPersonIndex] == _firstSpeaker) SwitchStage();
         } while ((Players[nextPersonIndex].IsMuted || Players[nextPersonIndex].IsKickedOut) && ++crushIterator < Players.Count );
         
         return crushIterator == Players.Count * 2 ? null : Players[nextPersonIndex];
