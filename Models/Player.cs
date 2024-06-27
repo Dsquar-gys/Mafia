@@ -15,7 +15,7 @@ public class Player : ReactiveObject
     private bool _isNominated;
     private bool _isKickedOut;
 
-    private int Fouls
+    public int Fouls
     {
         get => _fouls;
         set => this.RaiseAndSetIfChanged(ref _fouls, value);

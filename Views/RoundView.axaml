@@ -72,36 +72,28 @@
 											<TextBlock Text="{Binding Role}"
 											           Foreground="White"/>
 										</Border>
-										<ListBox Grid.Column="3"
-										         Theme="{DynamicResource CheckGroupListBox}"
-										         HorizontalAlignment="Right"
-										         VerticalAlignment="Center"
-										         SelectionMode="3">
+										<StackPanel Grid.Column="3"
+										            Spacing="10"
+										            Orientation="Horizontal">
+											<Button Content="Foul"
+											        Theme="{DynamicResource BorderlessButton}"
+											        Classes="Danger"
+											        IsEnabled="{Binding !IsMuted}"
+											        Command="{Binding SetFoulCommand}"/>
+											<TextBlock Tag="{Binding IsMuted}"
+											           VerticalAlignment="Center"
+											           HorizontalAlignment="Center"/>
 											
-											<Interaction.Behaviors>
-												<EventTriggerBehavior EventName="SelectionChanged">
-													<InvokeCommandAction Command="{Binding SetFoulCommand}"/>
-												</EventTriggerBehavior>
-											</Interaction.Behaviors>
-										
-											<ListBoxItem Content="Foul" />
-											<ListBoxItem Content="Foul" />
-											<ListBoxItem Content="Foul" />
-										
-											<ListBox.Styles>
-												
-												<Style Selector="ListBoxItem">
-													<Setter Property="Margin" Value="10, 0" />
-													<Setter Property="VerticalAlignment" Value="Center" />
+											<StackPanel.Styles>
+												<Style Selector="TextBlock[Tag=False]">
+													<Setter Property="Text" Value="{Binding Fouls, StringFormat='Fouls: {0}'}" />
 												</Style>
-												
-												<Style Selector="ListBoxItem[IsSelected=True]">
-													<Setter Property="IsEnabled" Value="False" />
+												<Style Selector="TextBlock[Tag=True]">
+													<Setter Property="Text" Value="Muted" />
+													<Setter Property="Foreground" Value="Red" />
 												</Style>
-												
-											</ListBox.Styles>
-										
-										</ListBox>
+											</StackPanel.Styles>
+										</StackPanel>
 										<Button Grid.Column="4"
 										        Content="Kill"
 										        Classes="Danger"
