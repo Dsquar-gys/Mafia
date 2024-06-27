@@ -10,8 +10,14 @@
         <entry key="Headers/TeamsConfigHeaderView.axaml" value="Mafia.csproj" />
         <entry key="Models/IconResources.axaml" value="Mafia.csproj" />
         <entry key="Templated Controls/PlayerCard.axaml" value="Mafia.csproj" />
+        <entry key="Views/Headers/EmptyHeaderView.axaml" value="Mafia.csproj" />
+        <entry key="Views/Headers/LobbyConfigHeaderView.axaml" value="Mafia.csproj" />
+        <entry key="Views/Headers/RoundHeaderView.axaml" value="Mafia.csproj" />
+        <entry key="Views/Headers/TeamsConfigHeaderView.axaml" value="Mafia.csproj" />
         <entry key="Views/LobbyConfigView.axaml" value="Mafia.csproj" />
         <entry key="Views/MainWindow.axaml" value="Mafia.csproj" />
+        <entry key="Views/Pages/StarterView.axaml" value="Mafia.csproj" />
+        <entry key="Views/Pages/TeamsConfigView.axaml" value="Mafia.csproj" />
         <entry key="Views/RoundView.axaml" value="Mafia.csproj" />
         <entry key="Views/StarterView.axaml" value="Mafia.csproj" />
         <entry key="Views/TeamsConfigView.axaml" value="Mafia.csproj" />

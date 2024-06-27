@@ -27,14 +27,4 @@
     <PackageReference Include="DynamicData" Version="8.4.1" />
     <PackageReference Include="Semi.Avalonia" Version="11.0.7.3" />
   </ItemGroup>
-
-
-  <ItemGroup>
-    <Compile Update="Views\StarterView.axaml.cs">
-      <DependentUpon>StarterView.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\RoundView.axaml.cs">
-      <DependentUpon>RoundView.axaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
 </Project>

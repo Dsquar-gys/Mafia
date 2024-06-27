@@ -1,11 +1,14 @@
 using System;
 using System.Reactive;
+using Mafia.Models.Enums;
 using ReactiveUI;
 
 namespace Mafia.Models;
 
 public class Player : ReactiveObject
 {
+    #region + Private fields +
+    
     private int _position;
     private string _nickname;
     private GameRole _role;
@@ -14,7 +17,11 @@ public class Player : ReactiveObject
     private bool _isMuted;
     private bool _isNominated;
     private bool _isKickedOut;
+    
+    #endregion
 
+    #region + Properties +
+    
     public int Fouls
     {
         get => _fouls;
@@ -44,7 +51,7 @@ public class Player : ReactiveObject
     public bool IsKickedOut
     {
         get => _isKickedOut;
-        set => this.RaiseAndSetIfChanged(ref _isKickedOut, value);
+        private set => this.RaiseAndSetIfChanged(ref _isKickedOut, value);
     }
 
     public bool IsMuted
@@ -56,8 +63,10 @@ public class Player : ReactiveObject
     public bool IsNominated
     {
         get => _isNominated;
-        set => this.RaiseAndSetIfChanged(ref _isNominated, value);
+        private set => this.RaiseAndSetIfChanged(ref _isNominated, value);
     }
+    
+    #endregion
 
     public Player(int position, string name)
     {
@@ -69,10 +78,18 @@ public class Player : ReactiveObject
             .Subscribe(x => IsMuted = x);
     }
 
+    #region + Commands +
+    
     public ReactiveCommand<Unit, Unit> SetFoulCommand => ReactiveCommand.Create(() => { Fouls++; });
     public ReactiveCommand<Unit, Unit> NominateCommand => ReactiveCommand.Create(() => { IsNominated = true; });
     public ReactiveCommand<Unit, Unit> KickCommand => ReactiveCommand.Create(() => { IsKickedOut = true; });
     
+    #endregion
+    
+    #region + Methods +
+    
     public void UpdatePosition(int newPos) => Position = newPos;
     public void UpdateRole(GameRole newRole) => Role = newRole;
+    
+    #endregion
 }

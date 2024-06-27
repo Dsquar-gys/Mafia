@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive.Subjects;
 using System.Windows.Input;
+using Mafia.ViewModels.Pages;
 using ReactiveUI;
 
 namespace Mafia.ViewModels
@@ -26,15 +27,9 @@ namespace Mafia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _currentPage, value);
         }
 
-        private int PageIndex
-        {
-            get => _pageIndex;
-            set => this.RaiseAndSetIfChanged(ref _pageIndex, value);
-        }
-        
-        public Subject<bool> CanMoveForwardCore { get; }
-        
-        public Subject<bool> CanMoveBackCore { get; }
+        private Subject<bool> CanMoveForwardCore { get; }
+
+        private Subject<bool> CanMoveBackCore { get; }
         
         #endregion
         
@@ -53,6 +48,7 @@ namespace Mafia.ViewModels
 
             _currentPage = _pages[_pageIndex];
             
+            // Update movability for current page
             this.WhenAnyValue(vm => vm.CurrentPage)
                 .Subscribe(page =>
                 {
@@ -76,8 +72,8 @@ namespace Mafia.ViewModels
 
         #region + Command Methods +
 
-        private void GetNextPage() => CurrentPage = _pages[++PageIndex];
-        private void GetPreviousPage() => CurrentPage = _pages[--PageIndex];
+        private void GetNextPage() => CurrentPage = _pages[++_pageIndex];
+        private void GetPreviousPage() => CurrentPage = _pages[--_pageIndex];
 
         #endregion
     }

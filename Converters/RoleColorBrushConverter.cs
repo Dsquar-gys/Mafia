@@ -1,13 +1,15 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
-using Mafia.Models;
+using Mafia.Models.Enums;
 
 namespace Mafia.Converters;
 
+/// <summary>
+/// Convert <see cref="GameRole"/> to <see cref="IBrush"/>
+/// </summary>
 public class RoleColorBrushConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)

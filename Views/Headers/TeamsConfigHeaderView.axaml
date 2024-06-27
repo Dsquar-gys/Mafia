@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:headers="clr-namespace:Mafia.ViewModels.Headers"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Mafia.Views.Headers.TeamsConfigHeaderView"
+             x:DataType="headers:TeamsConfigHeader">
+    
+    <Design.DataContext>
+        <headers:TeamsConfigHeader />
+    </Design.DataContext>
+    
+    <!-- Header -->
+    <Grid ColumnDefinitions="*,*,*"
+          Margin="15">
+        <Border Grid.Column="1"
+                Padding="35,5"
+                Background="{StaticResource LightBlue}"
+                CornerRadius="5">
+            <TextBlock Text="Manage Teams"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Foreground="White"/>
+        </Border>
+        <Button Grid.Column="2"
+                Content="Shuffle"
+                Foreground="White"
+                HorizontalAlignment="Right"
+                Command="{Binding Parent.ShuffleCommand}"/>
+    </Grid>
+    
+</UserControl>

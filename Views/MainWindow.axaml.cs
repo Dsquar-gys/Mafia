@@ -1,6 +1,6 @@
 using System;
 using Avalonia.Controls;
-using Mafia.ViewModels;
+using Mafia.ViewModels.Pages;
 using ReactiveUI;
 
 namespace Mafia.Views

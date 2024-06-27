@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Mafia.ViewModels;
 using System;
+using Mafia.ViewModels.Headers;
 
 namespace Mafia
 {
@@ -10,7 +11,8 @@ namespace Mafia
         public Control Build(object data)
         {
             var vmName = data.GetType().FullName!;
-            var name = data is ViewModelBase ? vmName.Replace("ViewModel", "View") : vmName + "View";
+            var name = vmName.Replace("ViewModel", "View");
+            if (data is HeaderVMBase) name += "View";
             var type = Type.GetType(name);
 
             if (type != null)
@@ -23,7 +25,7 @@ namespace Mafia
 
         public bool Match(object data)
         {
-            return data is ViewModelBase or HeaderTemplateBase;
+            return data is ViewModelBase or HeaderVMBase;
         }
     }
 }
