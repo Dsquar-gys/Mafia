@@ -24,6 +24,7 @@ public sealed class RoundViewModel : Page
     private Player? _currentPlayer;
     private Player? _firstSpeaker;
     private GameStage _stage;
+    private GameOver _gameOver = GameOver.None;
     private int _round;
     
     /// <summary>
@@ -83,6 +84,12 @@ public sealed class RoundViewModel : Page
         }
     }
 
+    private GameOver GameOver
+    {
+        get => _gameOver;
+        set => this.RaiseAndSetIfChanged(ref _gameOver, value);
+    }
+
     public bool VoteStagePermission => _stage is GameStage.Vote;
     public bool NightStagePermission => _stage is GameStage.Night;
     public bool DayStagePermission => _stage is GameStage.Day;
@@ -119,6 +126,7 @@ public sealed class RoundViewModel : Page
                 Players.Clear();
                 Players.AddRange(Statistic.Players.Items);
                 
+                GameOver = GameOver.None;
                 _nominationSub.Dispose();
                 _nominationSub = new();
                 
@@ -201,10 +209,18 @@ public sealed class RoundViewModel : Page
         // Subscription to switch stage on murder or kick
         Players.ToObservableChangeSet()
             .WhenPropertyChanged(x => x.IsKickedOut)
-            .Subscribe(_ => SwitchStage());
+            .Subscribe(_ =>
+            {
+                GameOver = CheckGameOver();
+                if (GameOver == GameOver.None)
+                    SwitchStage();
+            });
+
+        this.WhenAnyValue(vm => vm.GameOver, over => over is not GameOver.None)
+            .Subscribe(_ => EndSession());
 
         SwitchStageCommand = ReactiveCommand.Create(SwitchStage);
-        EndSessionCommand = ReactiveCommand.Create<GameOver>(EndSession);
+        EndSessionCommand = ReactiveCommand.Create(EndSession);
     }
 
     #region + Commands +
@@ -217,7 +233,7 @@ public sealed class RoundViewModel : Page
 
     public ReactiveCommand<Unit, Unit> SwitchStageCommand { get; }
     
-    public ReactiveCommand<GameOver, Unit> EndSessionCommand { get; }
+    public ReactiveCommand<Unit, Unit> EndSessionCommand { get; }
     
     #endregion
     
@@ -253,13 +269,14 @@ public sealed class RoundViewModel : Page
         return peasants.Length <= mafias.Length ? GameOver.BlackWins : GameOver.None;
     }
 
-    private void EndSession(GameOver gameOver)
+    private void EndSession()
     {
-        Statistic.CreateReport(gameOver);
+        Statistic.CreateReport(GameOver);
         
         // TODO Reset session
         
         _nominationSub.Dispose();
+        _skipSubscription?.Dispose();
     }
     
     #endregion

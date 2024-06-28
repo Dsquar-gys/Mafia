@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:models="clr-namespace:Mafia.Models"
              xmlns:headers="clr-namespace:Mafia.ViewModels.Headers"
-             xmlns:enums="clr-namespace:Mafia.Models.Enums"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Mafia.Views.Headers.RoundHeaderView"
              x:DataType="headers:RoundHeader">
@@ -47,9 +46,7 @@
         
         <Button Grid.Column="2"
                 Content="End session"
-                Command="{Binding Parent.EndSessionCommand}"
-                CommandParameter="{x:Static enums:GameOver.None}"/>
-			
+                Command="{Binding Parent.EndSessionCommand}"/>
     </Grid>
     
 </UserControl>

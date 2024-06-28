@@ -109,6 +109,7 @@
 								        CornerRadius="10">
 									<RadioButton VerticalAlignment="Center"
 									             Content="Nominated"
+									             IsChecked="{Binding IsNominated, Mode=OneWay}"
 									             IsEnabled="{Binding Path=!$parent[views:RoundView].((pages:RoundViewModel)DataContext).NightStagePermission, FallbackValue=false}"
 									             Command="{Binding NominateCommand}" />
 								</Border>
