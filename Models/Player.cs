@@ -45,8 +45,18 @@ public class Player : ReactiveObject
         get => _role;
         set => this.RaiseAndSetIfChanged(ref _role, value);
     }
-    
-    public bool IsActiveRole => _role is GameRole.Detective or GameRole.Don;
+
+    public bool IsActiveRole
+    {
+        get => _role is GameRole.Detective or GameRole.Don;
+        set
+        {
+            if (value) Role = Role is GameRole.Mafia ? GameRole.Don : GameRole.Detective;
+            else Role = Role is GameRole.Don ? GameRole.Mafia : GameRole.Peasant;
+            
+            this.RaisePropertyChanged();
+        }
+    }
 
     public bool IsKickedOut
     {
