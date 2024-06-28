@@ -235,9 +235,9 @@ public sealed class RoundViewModel : Page
             
             // if we passed first speaker --> round is over
             if (Players[nextPersonIndex] == _firstSpeaker) SwitchStage();
-        } while ((Players[nextPersonIndex].IsMuted || Players[nextPersonIndex].IsKickedOut) && ++crushIterator < Players.Count );
+        } while ((Players[nextPersonIndex].IsMuted || Players[nextPersonIndex].IsKickedOut) && ++crushIterator < Players.Count + 1 );
         
-        return crushIterator == Players.Count * 2 ? null : Players[nextPersonIndex];
+        return crushIterator == Players.Count + 1 ? null : Players[nextPersonIndex];
     }
 
     private void SwitchStage() => Stage = (GameStage)((int)(Stage + 1) % Enum.GetValues(typeof(GameStage)).Length);
