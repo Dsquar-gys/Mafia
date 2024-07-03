@@ -1,16 +1,18 @@
 ﻿using System;
+using System.Reactive;
 using System.Reactive.Subjects;
-using System.Windows.Input;
+using Avalonia.Controls.Notifications;
+using Mafia.Models;
 using Mafia.ViewModels.Pages;
 using ReactiveUI;
 
 namespace Mafia.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : ViewModelBase, ILogicalParent
     {
         #region + Private Fields +
 
-        private readonly Page[] _pages;
+        private readonly Lazy<Page>[] _pages;
         private Page _currentPage;
         private int _pageIndex;
 
@@ -31,22 +33,24 @@ namespace Mafia.ViewModels
 
         private Subject<bool> CanMoveBackCore { get; }
         
+        public required INotificationManager NotificationManager { get; init; }
+
         #endregion
         
         public MainWindowViewModel()
         {
             _pages =
             [
-                new StarterViewModel(),
-                new LobbyConfigViewModel(),
-                new TeamsConfigViewModel(),
-                new RoundViewModel()
+                new Lazy<Page>(() => new StarterViewModel(this)),
+                new Lazy<Page>(() => new LobbyConfigViewModel(this)),
+                new Lazy<Page>(() => new TeamsConfigViewModel(this)),
+                new Lazy<Page>(() => new RoundViewModel(this))
             ];
 
             CanMoveForwardCore = new Subject<bool>();
             CanMoveBackCore = new Subject<bool>();
 
-            _currentPage = _pages[_pageIndex];
+            _currentPage = _pages[_pageIndex].Value;
             
             // Update movability for current page
             this.WhenAnyValue(vm => vm.CurrentPage)
@@ -65,15 +69,15 @@ namespace Mafia.ViewModels
 
         #region + Commands +
 
-        public ICommand MoveNextCommand { get; }
-        public ICommand MoveBackCommand { get; }
+        public ReactiveCommand<Unit, Unit> MoveNextCommand { get; }
+        public ReactiveCommand<Unit, Unit> MoveBackCommand { get; }
 
         #endregion
 
         #region + Command Methods +
 
-        private void GetNextPage() => CurrentPage = _pages[++_pageIndex];
-        private void GetPreviousPage() => CurrentPage = _pages[--_pageIndex];
+        private void GetNextPage() => CurrentPage = _pages[++_pageIndex].Value;
+        private void GetPreviousPage() => CurrentPage = _pages[--_pageIndex].Value;
 
         #endregion
     }

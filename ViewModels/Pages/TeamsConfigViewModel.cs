@@ -56,7 +56,7 @@ public sealed class TeamsConfigViewModel : Page
     
     #endregion
     
-    public TeamsConfigViewModel()
+    public TeamsConfigViewModel(ILogicalParent parent) : base(parent)
     {
         Header = new TeamsConfigHeader(this);
         

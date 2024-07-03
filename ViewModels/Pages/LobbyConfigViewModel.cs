@@ -48,7 +48,7 @@ namespace Mafia.ViewModels.Pages
         
         #endregion
         
-        public LobbyConfigViewModel()
+        public LobbyConfigViewModel(ILogicalParent parent) : base(parent)
         {
             Header = new LobbyConfigHeader(this);
             

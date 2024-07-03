@@ -33,7 +33,7 @@ namespace Mafia.ViewModels.Pages
         
         #endregion
 
-        public StarterViewModel()
+        public StarterViewModel(ILogicalParent parent) : base(parent)
         {
             CanMoveBack = this.WhenAnyValue(vm => vm.Header, header => header is not EmptyHeader);
             CanMoveForward = this.WhenAnyValue(vm => vm.MasterName.Length, length => length > 0);

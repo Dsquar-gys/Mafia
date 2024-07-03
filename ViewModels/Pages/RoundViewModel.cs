@@ -3,9 +3,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
 using System.Timers;
 using DynamicData;
-using DynamicData.Binding;
 using Mafia.Models;
 using Mafia.Models.Enums;
 using Mafia.ViewModels.Headers;
@@ -106,7 +107,7 @@ public sealed class RoundViewModel : Page
 
     #endregion
 
-    public RoundViewModel()
+    public RoundViewModel(ILogicalParent parent) : base(parent)
     {
         _secondTimer.AutoReset = true;
         _secondTimer.Interval = 50;
@@ -118,41 +119,6 @@ public sealed class RoundViewModel : Page
         CanMoveBack = this.WhenAnyValue(vm => vm.Header, header => header is not RoundHeader);
         // Permanent false
         CanMoveForward = this.WhenAnyValue(vm => vm.Header, header => header is not RoundHeader);
-        
-        // Update players list
-        Statistic.Players.CountChanged
-            .Subscribe(_ =>
-            {
-                Players.Clear();
-                Players.AddRange(Statistic.Players.Items);
-                
-                GameOver = GameOver.None;
-                _nominationSub.Dispose();
-                _nominationSub = new();
-                
-                foreach (var player in Players)
-                {
-                    player.WhenAnyValue(p => p.IsNominated)
-                        .Subscribe(nominated =>
-                        {
-                            if (nominated && ! NominatedPlayers.Contains(player)) NominatedPlayers.Add(player);
-                        })
-                        .DisposeWith(_nominationSub);
-
-                    player.WhenAnyValue(p => p.IsKickedOut)
-                        .Subscribe(kicked =>
-                        {
-                            if (kicked && NominatedPlayers.Contains(player))
-                                NominatedPlayers.Remove(player);
-                        });
-                }
-
-                Stage = GameStage.Day;
-                Round = 1;
-                
-                _firstSpeaker = Players.FirstOrDefault(x => x is { IsMuted: false, IsKickedOut: false });
-                CurrentPlayer = _firstSpeaker;
-            });
         
         // On current speaker change
         this.WhenAnyValue(vm => vm.CurrentPlayer)
@@ -205,22 +171,51 @@ public sealed class RoundViewModel : Page
         // Change time display each second
         this.WhenAnyValue(x => x.Seconds)
             .Subscribe(x => TimeDisplay = $"{x / 60}:{x % 60}");
-        
-        // Subscription to switch stage on murder or kick
-        Players.ToObservableChangeSet()
-            .WhenPropertyChanged(x => x.IsKickedOut)
-            .Subscribe(_ =>
-            {
-                GameOver = CheckGameOver();
-                if (GameOver == GameOver.None)
-                    SwitchStage();
-            });
 
         this.WhenAnyValue(vm => vm.GameOver, over => over is not GameOver.None)
-            .Subscribe(_ => EndSession());
+            .Subscribe(_ => EndSession().Wait());
+        
+        // Update players list
+        Statistic.Players.CountChanged
+            .Subscribe(_ =>
+            {
+                Players.Clear();
+                Players.AddRange(Statistic.Players.Items);
+                
+                _nominationSub.Dispose();
+                _nominationSub = new();
+                
+                foreach (var player in Players)
+                {
+                    player.WhenAnyValue(p => p.IsNominated)
+                        .Subscribe(nominated =>
+                        {
+                            if (nominated && ! NominatedPlayers.Contains(player)) NominatedPlayers.Add(player);
+                        })
+                        .DisposeWith(_nominationSub);
+
+                    player.WhenAnyValue(p => p.IsKickedOut)
+                        .Subscribe(kicked =>
+                        {
+                            GameOver = CheckGameOver();
+                            if (GameOver == GameOver.None)
+                                SwitchStage();
+                            
+                            if (kicked && NominatedPlayers.Contains(player))
+                                NominatedPlayers.Remove(player);
+                        });
+                }
+
+                Stage = GameStage.Day;
+                GameOver = GameOver.None;
+                Round = 1;
+                
+                _firstSpeaker = Players.FirstOrDefault(x => x is { IsMuted: false, IsKickedOut: false });
+                CurrentPlayer = _firstSpeaker;
+            });
 
         SwitchStageCommand = ReactiveCommand.Create(SwitchStage);
-        EndSessionCommand = ReactiveCommand.Create(EndSession);
+        EndSessionCommand = ReactiveCommand.CreateFromTask(EndSession);
     }
 
     #region + Commands +
@@ -269,14 +264,30 @@ public sealed class RoundViewModel : Page
         return peasants.Length <= mafias.Length ? GameOver.BlackWins : GameOver.None;
     }
 
-    private void EndSession()
+    private async Task EndSession()
     {
         Statistic.CreateReport(GameOver);
-        
-        // TODO Reset session
-        
+
         _nominationSub.Dispose();
         _skipSubscription?.Dispose();
+
+        var window = Parent as MainWindowViewModel;
+        
+        switch (GameOver)
+        {
+            case GameOver.None:
+                while (window.CurrentPage is not StarterViewModel)
+                {
+                    await Parent.MoveBackCommand.Execute();
+                }
+                break;
+            case GameOver.RedWins:
+                break;
+            case GameOver.BlackWins:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
     
     #endregion

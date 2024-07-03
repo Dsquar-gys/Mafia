@@ -16,6 +16,7 @@
         <entry key="Views/Headers/TeamsConfigHeaderView.axaml" value="Mafia.csproj" />
         <entry key="Views/LobbyConfigView.axaml" value="Mafia.csproj" />
         <entry key="Views/MainWindow.axaml" value="Mafia.csproj" />
+        <entry key="Views/Pages/RoundView.axaml" value="Mafia.csproj" />
         <entry key="Views/Pages/StarterView.axaml" value="Mafia.csproj" />
         <entry key="Views/Pages/TeamsConfigView.axaml" value="Mafia.csproj" />
         <entry key="Views/RoundView.axaml" value="Mafia.csproj" />

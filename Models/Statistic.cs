@@ -1,4 +1,5 @@
-﻿using DynamicData;
+﻿using System;
+using DynamicData;
 using Mafia.Models.Enums;
 
 namespace Mafia.Models
@@ -21,6 +22,7 @@ namespace Mafia.Models
 
         public static void CreateReport( GameOver state )
         {
+            Console.WriteLine("Report...");
             //TODO
         }
     }
