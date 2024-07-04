@@ -3,6 +3,7 @@ using System.Reactive;
 using System.Reactive.Subjects;
 using Avalonia.Controls.Notifications;
 using Mafia.Models;
+using Mafia.Models.Enums;
 using Mafia.ViewModels.Pages;
 using ReactiveUI;
 
@@ -15,6 +16,7 @@ namespace Mafia.ViewModels
         private readonly Lazy<Page>[] _pages;
         private Page _currentPage;
         private int _pageIndex;
+        private bool _canEndSession;
 
         private IDisposable? _subscriptionForward;
         private IDisposable? _subscriptionBackward;
@@ -27,6 +29,12 @@ namespace Mafia.ViewModels
         {
             get => _currentPage;
             set => this.RaiseAndSetIfChanged(ref _currentPage, value);
+        }
+
+        public bool CanEndSession
+        {
+            get => _canEndSession;
+            set => this.RaiseAndSetIfChanged(ref _canEndSession, value);
         }
 
         private Subject<bool> CanMoveForwardCore { get; }
@@ -61,16 +69,21 @@ namespace Mafia.ViewModels
                     
                     _subscriptionBackward?.Dispose();
                     _subscriptionBackward = page.CanMoveBack.Subscribe(CanMoveBackCore.OnNext);
+
+                    CanEndSession = page is RoundViewModel;
                 });
             
             MoveNextCommand = ReactiveCommand.Create(GetNextPage, CanMoveForwardCore);
             MoveBackCommand = ReactiveCommand.Create(GetPreviousPage, CanMoveBackCore);
+
+            EndSessionCommand = ReactiveCommand.Create(EndSession);
         }
 
         #region + Commands +
 
         public ReactiveCommand<Unit, Unit> MoveNextCommand { get; }
         public ReactiveCommand<Unit, Unit> MoveBackCommand { get; }
+        public ReactiveCommand<Unit, Unit> EndSessionCommand { get; }
 
         #endregion
 
@@ -78,6 +91,11 @@ namespace Mafia.ViewModels
 
         private void GetNextPage() => CurrentPage = _pages[++_pageIndex].Value;
         private void GetPreviousPage() => CurrentPage = _pages[--_pageIndex].Value;
+
+        private void EndSession()
+        {
+            Statistic.CreateReport(GameOver.None);
+        }
 
         #endregion
     }

@@ -59,6 +59,14 @@
 				<Image Source="/Assets/arrow-right.png" />
 			</Button>
 			
+			<!-- End Session button -->
+			<Button Grid.Column="1"
+			        Classes="System"
+			        HorizontalAlignment="Right"
+			        Content="End Session"
+			        Command="{Binding EndSessionCommand}"
+			        IsVisible="{Binding CanEndSession}"/>
+			
 			<TransitioningContentControl Grid.Column="1"
 			                             Content="{Binding CurrentPage.Header}">
 				<TransitioningContentControl.PageTransition>

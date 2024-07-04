@@ -126,13 +126,14 @@ public sealed class RoundViewModel : Page
             {
                 // Dispose subscription for previous player
                 _skipSubscription?.Dispose();
-                _skipSubscription = nextPlayer.WhenAnyValue(x => x.IsMuted).Subscribe(muted =>
-                {
-                    if ( ! muted ) return;
-                    Paused = true;
-                    Seconds = 0;
-                    CurrentPlayer = GetNextPerson(CurrentPlayer!.Position);
-                });
+                _skipSubscription = nextPlayer.WhenAnyValue(x => x.IsMuted)
+                    .Where(muted => muted)
+                    .Subscribe(_ =>
+                    {
+                        Paused = true;
+                        Seconds = 0;
+                        CurrentPlayer = GetNextPerson(CurrentPlayer!.Position);
+                    });
             });
 
         // Change round number on next day
@@ -160,9 +161,9 @@ public sealed class RoundViewModel : Page
         // Paused after 1 minute
         this.WhenAnyValue(property1: vm => vm.Seconds,
                 selector: seconds => seconds >= 60)
+            .Where(x => x)
             .Subscribe(x =>
             {
-                if (!x) return;
                 Paused = x;
                 // Get next speakable player
                 CurrentPlayer = GetNextPerson(CurrentPlayer!.Position);
@@ -171,9 +172,6 @@ public sealed class RoundViewModel : Page
         // Change time display each second
         this.WhenAnyValue(x => x.Seconds)
             .Subscribe(x => TimeDisplay = $"{x / 60}:{x % 60}");
-
-        this.WhenAnyValue(vm => vm.GameOver, over => over is not GameOver.None)
-            .Subscribe(_ => EndSession().Wait());
         
         // Update players list
         Statistic.Players.CountChanged
@@ -215,7 +213,6 @@ public sealed class RoundViewModel : Page
             });
 
         SwitchStageCommand = ReactiveCommand.Create(SwitchStage);
-        EndSessionCommand = ReactiveCommand.CreateFromTask(EndSession);
     }
 
     #region + Commands +
@@ -227,8 +224,6 @@ public sealed class RoundViewModel : Page
     });
 
     public ReactiveCommand<Unit, Unit> SwitchStageCommand { get; }
-    
-    public ReactiveCommand<Unit, Unit> EndSessionCommand { get; }
     
     #endregion
     
@@ -262,32 +257,6 @@ public sealed class RoundViewModel : Page
         
         var peasants = alive.Except(mafias).ToArray();
         return peasants.Length <= mafias.Length ? GameOver.BlackWins : GameOver.None;
-    }
-
-    private async Task EndSession()
-    {
-        Statistic.CreateReport(GameOver);
-
-        _nominationSub.Dispose();
-        _skipSubscription?.Dispose();
-
-        var window = Parent as MainWindowViewModel;
-        
-        switch (GameOver)
-        {
-            case GameOver.None:
-                while (window.CurrentPage is not StarterViewModel)
-                {
-                    await Parent.MoveBackCommand.Execute();
-                }
-                break;
-            case GameOver.RedWins:
-                break;
-            case GameOver.BlackWins:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
     }
     
     #endregion
