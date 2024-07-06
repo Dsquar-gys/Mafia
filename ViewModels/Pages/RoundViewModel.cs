@@ -111,7 +111,7 @@ public sealed class RoundViewModel : Page
     public RoundViewModel(ILogicalParent parent) : base(parent)
     {
         _secondTimer.AutoReset = true;
-        _secondTimer.Interval = 50;
+        _secondTimer.Interval = 1000;
         _secondTimer.Elapsed += (_, _) => Seconds++;
 
         Header = new RoundHeader(this);
@@ -218,19 +218,23 @@ public sealed class RoundViewModel : Page
                 
                 foreach (var player in Players)
                 {
+                    // Add to nomination List
                     player.WhenAnyValue(p => p.IsNominated)
                         .Subscribe(nominated =>
                         {
                             if (nominated && ! NominatedPlayers.Contains(player)) NominatedPlayers.Add(player);
                         })
                         .DisposeWith(_nominationSub);
-
+                    
+                    // Withdraw player from the game
                     player.WhenAnyValue(p => p.IsKickedOut)
                         .Subscribe(kicked =>
                         {
                             GameOver = CheckGameOver();
                             if (GameOver == GameOver.None)
                                 SwitchStage();
+                            else // Some team won
+                                Parent.EndSession(GameOver);
                             
                             if (kicked && NominatedPlayers.Contains(player))
                                 NominatedPlayers.Remove(player);

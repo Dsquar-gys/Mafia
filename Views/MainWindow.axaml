@@ -63,9 +63,9 @@
 			        Classes="System"
 			        HorizontalAlignment="Right"
 			        Content="End Session"
-			        IsEnabled="{Binding CanEndSession}"
-			        Command="{Binding EndSessionCommand}"
-			        Opacity="{Binding CanEndSession}">
+			        IsEnabled="{Binding CanEarlyEndSession}"
+			        Command="{Binding EarlyEndSessionCommand}"
+			        Opacity="{Binding CanEarlyEndSession}">
 				<Button.Transitions>
 					<Transitions>
 						<DoubleTransition Property="Opacity"

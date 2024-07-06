@@ -148,13 +148,16 @@
 					<!-- Timer -->
 					<StackPanel Grid.Row="0"
 					            Orientation="Vertical"
-					            HorizontalAlignment="Center"
+					            Margin="20,0"
+					            MaxWidth="150"
+					            HorizontalAlignment="Stretch"
 					            VerticalAlignment="Center"
 					            Spacing="10">
 						<Border CornerRadius="5"
 						        Background="White"
 						        Padding="10">
 							<TextBlock FontSize="50"
+							           HorizontalAlignment="Center"
 							           Text="{Binding TimeDisplay}"/>
 						</Border>
 						<Button Theme="{DynamicResource SolidButton}"

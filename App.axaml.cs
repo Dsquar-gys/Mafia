@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Notifications;
 using Avalonia.Markup.Xaml;
@@ -18,9 +19,16 @@ namespace Mafia
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow
+                desktop.MainWindow = new MainWindow();
+
+                desktop.MainWindow.TemplateApplied += (sender, args) =>
                 {
-                    DataContext = new MainWindowViewModel{ NotificationManager = new WindowNotificationManager(desktop.MainWindow) }
+                    var notifications = new WindowNotificationManager(TopLevel.GetTopLevel(desktop.MainWindow));
+
+                    desktop.MainWindow.DataContext = new MainWindowViewModel()
+                    {
+                        NotificationManager = notifications
+                    };
                 };
             }
 

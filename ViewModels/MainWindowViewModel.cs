@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -8,6 +10,7 @@ using Mafia.Models;
 using Mafia.Models.Enums;
 using Mafia.ViewModels.Pages;
 using ReactiveUI;
+using Notification = Avalonia.Controls.Notifications.Notification;
 
 namespace Mafia.ViewModels
 {
@@ -18,7 +21,7 @@ namespace Mafia.ViewModels
         private readonly Page[] _pages;
         private Page? _currentPage;
         private int _pageIndex;
-        private bool _canEndSession;
+        private bool _canEarlyEndSession;
 
         private IDisposable? _subscriptionForward;
         private IDisposable? _subscriptionBackward;
@@ -33,10 +36,10 @@ namespace Mafia.ViewModels
             set => this.RaiseAndSetIfChanged(ref _currentPage, value);
         }
 
-        public bool CanEndSession
+        public bool CanEarlyEndSession
         {
-            get => _canEndSession;
-            set => this.RaiseAndSetIfChanged(ref _canEndSession, value);
+            get => _canEarlyEndSession;
+            set => this.RaiseAndSetIfChanged(ref _canEarlyEndSession, value);
         }
 
         private Subject<bool> CanMoveForwardCore { get; }
@@ -75,7 +78,7 @@ namespace Mafia.ViewModels
                     _subscriptionBackward?.Dispose();
                     _subscriptionBackward = pageChange.Current.CanMoveBack.Subscribe(CanMoveBackCore.OnNext);
 
-                    CanEndSession = pageChange.Current is RoundViewModel;
+                    CanEarlyEndSession = pageChange.Current is RoundViewModel;
                 });
             
             CurrentPage = _pages[_pageIndex];
@@ -83,14 +86,14 @@ namespace Mafia.ViewModels
             MoveNextCommand = ReactiveCommand.Create(GetNextPage, CanMoveForwardCore);
             MoveBackCommand = ReactiveCommand.Create(GetPreviousPage, CanMoveBackCore);
 
-            EndSessionCommand = ReactiveCommand.Create(EndSession);
+            EarlyEndSessionCommand = ReactiveCommand.Create(() => EndSession(GameOver.None));
         }
 
         #region + Commands +
 
         public ReactiveCommand<Unit, Unit> MoveNextCommand { get; }
         public ReactiveCommand<Unit, Unit> MoveBackCommand { get; }
-        public ReactiveCommand<Unit, Unit> EndSessionCommand { get; }
+        public ReactiveCommand<Unit, Unit> EarlyEndSessionCommand { get; }
 
         #endregion
 
@@ -105,9 +108,40 @@ namespace Mafia.ViewModels
             CurrentPage = _pages[index];
         }
 
-        private void EndSession()
+        public void EndSession(GameOver sessionResult)
         {
-            Statistic.CreateReport(GameOver.None);
+            // List of mafia names
+            var mafias = Statistic.Players.Items.Where(x => x.Role is GameRole.Mafia).Select(x => x.Nickname + ", ")
+                .Aggregate(string.Empty, (current, mafia) => current + mafia);
+            
+            var title = sessionResult switch
+            {
+                GameOver.None => "It's draw",
+                GameOver.BlackWins => "Black wins",
+                GameOver.RedWins => "Red wins",
+                _ => throw new InvalidDataException()
+            };
+            
+            var message = sessionResult switch
+            {
+                GameOver.None =>      $"Detective: {Statistic.Players.Items.FirstOrDefault(x => x.Role is GameRole.Detective)?.Nickname}\n" +
+                                      $"Don: {Statistic.Players.Items.FirstOrDefault(x => x.Role is GameRole.Don)?.Nickname}\n" +
+                                      $"Mafia: {mafias}",
+                GameOver.BlackWins => $"Detective: {Statistic.Players.Items.FirstOrDefault(x => x.Role is GameRole.Detective)?.Nickname}\n" +
+                                      $"Don: {Statistic.Players.Items.FirstOrDefault(x => x.Role is GameRole.Don)?.Nickname}\n" +
+                                      $"Mafia: {mafias}",
+                GameOver.RedWins =>   $"Detective: {Statistic.Players.Items.FirstOrDefault(x => x.Role is GameRole.Detective)?.Nickname}\n" +
+                                      $"Don: {Statistic.Players.Items.FirstOrDefault(x => x.Role is GameRole.Don)?.Nickname}\n" +
+                                      $"Mafia: {mafias}",
+                _ => throw new InvalidDataException()
+            };
+            
+            var notification = new Notification(title, message[..^2]);
+            
+            // Show session result
+            NotificationManager.Show(notification);
+            
+            // Clear statistic
             Statistic.Players.Clear();
             Statistic.DefineMaster(string.Empty);
 

@@ -11,8 +11,22 @@ namespace Mafia
         public Control Build(object data)
         {
             var vmName = data.GetType().FullName!;
-            var name = vmName.Replace("ViewModel", "View");
-            if (data is HeaderVMBase) name += "View";
+            string name;
+
+            if (vmName.Contains("Window")) // For windows
+            {
+                name = vmName.Replace("ViewModel", "");
+            }
+            else if (data is HeaderVMBase) // For headers
+            {
+                name = vmName.Replace("ViewModel", "View");
+                name += "View";
+            }
+            else // For any other VM
+            {
+                name = vmName.Replace("ViewModel", "View");
+            }
+            
             var type = Type.GetType(name);
 
             if (type != null)
