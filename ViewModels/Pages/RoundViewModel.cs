@@ -195,6 +195,7 @@ public sealed class RoundViewModel : Page
             .Subscribe(x =>
             {
                 Paused = x;
+                Seconds = 0;
                 // Get next speakable player
                 CurrentPlayer = GetNextPerson(CurrentPlayer!.Position);
             })
@@ -252,6 +253,9 @@ public sealed class RoundViewModel : Page
         _skipSubscription?.Dispose();
         _nominationSub.Dispose();
         _onDeactivate.Dispose();
+        
+        _nominationSub = new();
+        _onDeactivate = new();
     }
 
     public override void OnReset()

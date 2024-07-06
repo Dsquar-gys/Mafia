@@ -63,6 +63,7 @@
 			        Classes="System"
 			        HorizontalAlignment="Right"
 			        Content="End Session"
+			        IsEnabled="{Binding CanEndSession}"
 			        Command="{Binding EndSessionCommand}"
 			        Opacity="{Binding CanEndSession}">
 				<Button.Transitions>
