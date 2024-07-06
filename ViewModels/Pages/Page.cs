@@ -29,7 +29,5 @@ namespace Mafia.ViewModels.Pages
         public abstract void OnActivate();
         public abstract void OnDeactivate();
         public abstract void OnReset();
-
-        //protected abstract void Initialize();
     }
 }

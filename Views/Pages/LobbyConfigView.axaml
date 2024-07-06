@@ -5,6 +5,7 @@
              xmlns:pages="clr-namespace:Mafia.ViewModels.Pages"
              xmlns:views="clr-namespace:Mafia.Views.Pages"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             Background="{StaticResource LightBlue+2}"
              x:Class="Mafia.Views.Pages.LobbyConfigView"
 			 x:DataType="pages:LobbyConfigViewModel">
 
@@ -15,8 +16,7 @@
 	<Grid RowDefinitions="Auto, *">
 		
 		<!-- Body -->
-		<Border Grid.Row="1"
-				Background="{StaticResource LightBlue}">
+		<Border Grid.Row="1">
 			<ScrollViewer VerticalScrollBarVisibility="Auto">
 				<ItemsControl Margin="20"
 						  Name="PlayersBody"

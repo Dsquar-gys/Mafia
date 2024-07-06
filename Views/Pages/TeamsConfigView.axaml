@@ -6,6 +6,7 @@
              mc:Ignorable="d"
              d:DesignWidth="800"
              d:DesignHeight="450"
+             Background="{StaticResource LightBlue+1}"
              x:Class="Mafia.Views.Pages.TeamsConfigView"
              x:DataType="pages:TeamsConfigViewModel"
              Loaded="View_OnLoaded">
@@ -18,7 +19,6 @@
         
         <!-- Body -->
         <Border Grid.Row="0"
-                Background="{StaticResource LightBlue}"
                 Name="DragContainer"
                 DragDrop.AllowDrop="True">
             
@@ -38,7 +38,6 @@
                 
                 <!-- Transparent -->
                 <Border Grid.Column="0"
-                        Background="{StaticResource LightBlue}"
                         Padding="10"
                         MinWidth="200">
                     
@@ -77,7 +76,6 @@
                 
                 <!-- Reds -->
                 <Border Grid.Column="2"
-                        Background="{StaticResource LightBlue}"
                         Padding="10"
                         Name="FloPPa">
                     
@@ -137,7 +135,6 @@
                 
                 <!-- Blacks -->
                 <Border Grid.Column="4"
-                        Background="{StaticResource LightBlue}"
                         Padding="10">
                     
                     <ScrollViewer VerticalScrollBarVisibility="Auto"

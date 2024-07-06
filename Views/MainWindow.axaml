@@ -13,14 +13,12 @@
         Title="Mafia">
 
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 	
 	<Window.Resources>
 		<system:Double x:Key="HeaderHeight">60</system:Double>
-		<system:TimeSpan x:Key="TransitionDuration">0:00:00.300</system:TimeSpan>
+		<system:TimeSpan x:Key="TransitionDuration">0:00:00.600</system:TimeSpan>
 	</Window.Resources>
 
 	<Grid>
@@ -42,7 +40,8 @@
 			
 			<Grid.Transitions>
 				<Transitions>
-					<DoubleTransition Property="Opacity" Duration="{StaticResource TransitionDuration}"/>
+					<DoubleTransition Property="Opacity"
+					                  Duration="{StaticResource TransitionDuration}"/>
 				</Transitions>
 			</Grid.Transitions>
 			
@@ -65,7 +64,14 @@
 			        HorizontalAlignment="Right"
 			        Content="End Session"
 			        Command="{Binding EndSessionCommand}"
-			        IsVisible="{Binding CanEndSession}"/>
+			        Opacity="{Binding CanEndSession}">
+				<Button.Transitions>
+					<Transitions>
+						<DoubleTransition Property="Opacity"
+						                  Duration="{StaticResource TransitionDuration}" />
+					</Transitions>
+				</Button.Transitions>
+			</Button>
 			
 			<TransitioningContentControl Grid.Column="1"
 			                             Content="{Binding CurrentPage.Header}">
@@ -87,12 +93,19 @@
 			
 		</Grid>
 		
+		<!-- Content Body -->
 		<TransitioningContentControl Grid.Row="1"
 		                             Name="CurrentPageControl"
 		                             Content="{Binding CurrentPage}">
 			<TransitioningContentControl.PageTransition>
 				<CrossFade Duration="{StaticResource TransitionDuration}" />
 			</TransitioningContentControl.PageTransition>
+			<TransitioningContentControl.Transitions>
+				<Transitions>
+					<BrushTransition Property="Background"
+					                 Duration="{StaticResource TransitionDuration}" />
+				</Transitions>
+			</TransitioningContentControl.Transitions>
 		</TransitioningContentControl>
 		
 	</Grid>

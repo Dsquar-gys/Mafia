@@ -11,6 +11,8 @@
 		<SolidColorBrush x:Key="DarkGreen">#556B2F</SolidColorBrush>
 		<SolidColorBrush x:Key="DarkGray">#696969</SolidColorBrush>
 		<SolidColorBrush x:Key="LightBlue">#3B465B</SolidColorBrush>
+		<SolidColorBrush x:Key="LightBlue+1">#47586B</SolidColorBrush>
+		<SolidColorBrush x:Key="LightBlue+2">#566A82</SolidColorBrush>
 		<SolidColorBrush x:Key="Golden">#DAA520</SolidColorBrush>
 	</Application.Resources>
 	
