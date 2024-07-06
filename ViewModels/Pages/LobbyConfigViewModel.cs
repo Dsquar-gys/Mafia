@@ -15,6 +15,7 @@ namespace Mafia.ViewModels.Pages
         #region + Private fields +
         
         private int _playerIndexer;
+        private IDisposable _connectionSubscription;
 
         #endregion
         
@@ -55,10 +56,6 @@ namespace Mafia.ViewModels.Pages
             // Permanent true
             CanMoveBack = this.WhenAnyValue(property1: vm => vm.Header, selector: header => header is LobbyConfigHeader);
             CanMoveForward = Players.WhenAnyValue(x => x.Count, count => count >= 6);
-            
-            Statistic.Players.Connect()
-                .Bind(Players)
-                .Subscribe();
         }
         
         #region + Commands +
@@ -77,6 +74,41 @@ namespace Mafia.ViewModels.Pages
                 exPlayer.UpdatePosition(++tempIndexer);
         });
 
+        #endregion
+        
+        #region + Methods +
+        
+        public override void OnActivate()
+        {
+            _connectionSubscription = Statistic.Players.Connect()
+                .Bind(Players)
+                .Subscribe(UpdatePlayerIndexer);
+        }
+
+        public override void OnDeactivate()
+        {
+            _connectionSubscription.Dispose();
+            Players.Clear();
+        }
+
+        public override void OnReset()
+        {
+            OnDeactivate();
+            _playerIndexer = 0;
+        }
+
+        private void UpdatePlayerIndexer(IChangeSet<Player> changeSet)
+        {
+            foreach (var change in changeSet)
+            {
+                _playerIndexer = change.Reason switch
+                {
+                    ListChangeReason.Clear => 0,
+                    _ => _playerIndexer
+                };
+            }
+        }
+        
         #endregion
     }
 }

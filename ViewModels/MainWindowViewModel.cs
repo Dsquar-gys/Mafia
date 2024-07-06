@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Avalonia.Controls.Notifications;
+using DynamicData;
 using Mafia.Models;
 using Mafia.Models.Enums;
 using Mafia.ViewModels.Pages;
@@ -13,8 +15,8 @@ namespace Mafia.ViewModels
     {
         #region + Private Fields +
 
-        private readonly Lazy<Page>[] _pages;
-        private Page _currentPage;
+        private readonly Page[] _pages;
+        private Page? _currentPage;
         private int _pageIndex;
         private bool _canEndSession;
 
@@ -25,7 +27,7 @@ namespace Mafia.ViewModels
 
         #region + Properties +
 
-        public Page CurrentPage
+        public Page? CurrentPage
         {
             get => _currentPage;
             set => this.RaiseAndSetIfChanged(ref _currentPage, value);
@@ -49,29 +51,34 @@ namespace Mafia.ViewModels
         {
             _pages =
             [
-                new Lazy<Page>(() => new StarterViewModel(this)),
-                new Lazy<Page>(() => new LobbyConfigViewModel(this)),
-                new Lazy<Page>(() => new TeamsConfigViewModel(this)),
-                new Lazy<Page>(() => new RoundViewModel(this))
+                new StarterViewModel(this),
+                new LobbyConfigViewModel(this),
+                new TeamsConfigViewModel(this),
+                new RoundViewModel(this)
             ];
 
             CanMoveForwardCore = new Subject<bool>();
             CanMoveBackCore = new Subject<bool>();
-
-            _currentPage = _pages[_pageIndex].Value;
             
             // Update movability for current page
             this.WhenAnyValue(vm => vm.CurrentPage)
-                .Subscribe(page =>
+                .Buffer(2, 1)
+                .Select(t => (Previous: t[0], Current: t[1]))
+                .Subscribe(pageChange =>
                 {
+                    pageChange.Previous?.OnDeactivate();
+                    pageChange.Current!.OnActivate();
+                    
                     _subscriptionForward?.Dispose();
-                    _subscriptionForward = page.CanMoveForward.Subscribe(CanMoveForwardCore.OnNext);
+                    _subscriptionForward = pageChange.Current.CanMoveForward.Subscribe(x => CanMoveForwardCore.OnNext(x));
                     
                     _subscriptionBackward?.Dispose();
-                    _subscriptionBackward = page.CanMoveBack.Subscribe(CanMoveBackCore.OnNext);
+                    _subscriptionBackward = pageChange.Current.CanMoveBack.Subscribe(CanMoveBackCore.OnNext);
 
-                    CanEndSession = page is RoundViewModel;
+                    CanEndSession = pageChange.Current is RoundViewModel;
                 });
+            
+            CurrentPage = _pages[_pageIndex];
             
             MoveNextCommand = ReactiveCommand.Create(GetNextPage, CanMoveForwardCore);
             MoveBackCommand = ReactiveCommand.Create(GetPreviousPage, CanMoveBackCore);
@@ -89,12 +96,26 @@ namespace Mafia.ViewModels
 
         #region + Command Methods +
 
-        private void GetNextPage() => CurrentPage = _pages[++_pageIndex].Value;
-        private void GetPreviousPage() => CurrentPage = _pages[--_pageIndex].Value;
+        private void GetNextPage() => CurrentPage = _pages[++_pageIndex];
+        private void GetPreviousPage() => CurrentPage = _pages[--_pageIndex];
+
+        private void SetPageTo(int index)
+        {
+            _pageIndex = index;
+            CurrentPage = _pages[index];
+        }
 
         private void EndSession()
         {
             Statistic.CreateReport(GameOver.None);
+            Statistic.Players.Clear();
+            Statistic.DefineMaster(string.Empty);
+
+            SetPageTo(0);
+            foreach (var page in _pages)
+            {
+                page.OnReset();
+            }
         }
 
         #endregion

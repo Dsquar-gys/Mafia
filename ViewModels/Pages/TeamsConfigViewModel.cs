@@ -22,6 +22,8 @@ public sealed class TeamsConfigViewModel : Page
     
     private Player? _draggingPlayer;
     private readonly Random _random = new();
+    private IDisposable _connectionSubscription;
+    private int _playersCount;
     
     #endregion
     
@@ -48,6 +50,12 @@ public sealed class TeamsConfigViewModel : Page
     /// </summary>
     public ObservableCollection<Player> RedPlayers { get; } = new();
 
+    public int PlayersCount
+    {
+        get => _playersCount;
+        set => this.RaiseAndSetIfChanged(ref _playersCount, value);
+    }
+
     public Player? DraggingPlayer
     {
         get => _draggingPlayer;
@@ -63,13 +71,6 @@ public sealed class TeamsConfigViewModel : Page
         // Permanent true
         CanMoveBack = this.WhenAnyValue(property1: vm => vm.Header, selector: h => h is TeamsConfigHeader);
         CanMoveForward = TransparentPlayers.WhenAnyValue(x => x.Count, count => count == 0);
-
-        Statistic.Players.CountChanged
-            .Subscribe(x =>
-            {
-                Console.WriteLine("Amount of players changed to {0}", x);
-                CountChanged();
-            });
     }
     
     #region + Commands +
@@ -103,6 +104,23 @@ public sealed class TeamsConfigViewModel : Page
     
     #region + Methods +
     
+    public override void OnActivate()
+    {
+        _connectionSubscription = Statistic.Players.CountChanged
+            .Subscribe(CountCheck);
+    }
+
+    public override void OnDeactivate()
+    {
+        _connectionSubscription.Dispose();
+    }
+
+    public override void OnReset()
+    {
+        OnDeactivate();
+        CountCheck(0);
+    }
+
     public void StartDrag(Player player) => DraggingPlayer = player;
     
     public void Drop(Player player, string? destinationListName)
@@ -135,8 +153,12 @@ public sealed class TeamsConfigViewModel : Page
         return destination.collection is not null;
     }
     
-    private void CountChanged()
-    { // Check if Statistic.Players changes at all !!
+    private void CountCheck(int amount)
+    {
+        if (amount == PlayersCount) return;
+
+        Console.WriteLine("Amount of players changed to {0}", amount);
+        PlayersCount = amount;
         TransparentPlayers.Clear();
         
         foreach (var player in Statistic.Players.Items)

@@ -27,6 +27,7 @@ public sealed class RoundViewModel : Page
     private GameStage _stage;
     private GameOver _gameOver = GameOver.None;
     private int _round;
+    private CompositeDisposable _onDeactivate = new();
     
     /// <summary>
     /// Subscription to skip current player on IsMuted changed true
@@ -119,7 +120,26 @@ public sealed class RoundViewModel : Page
         CanMoveBack = this.WhenAnyValue(vm => vm.Header, header => header is not RoundHeader);
         // Permanent false
         CanMoveForward = this.WhenAnyValue(vm => vm.Header, header => header is not RoundHeader);
-        
+
+        SwitchStageCommand = ReactiveCommand.Create(SwitchStage);
+    }
+
+    #region + Commands +
+
+    public ReactiveCommand<Unit, Unit> SwitchTimerCommand => ReactiveCommand.Create(() =>
+    {
+        Paused ^= true;
+        if (!Paused && Seconds >= 60) Seconds = 0;
+    });
+
+    public ReactiveCommand<Unit, Unit> SwitchStageCommand { get; }
+    
+    #endregion
+    
+    #region + Methods +
+
+    public override void OnActivate()
+    {
         // On current speaker change
         this.WhenAnyValue(vm => vm.CurrentPlayer)
             .Subscribe(nextPlayer =>
@@ -133,12 +153,15 @@ public sealed class RoundViewModel : Page
                         Paused = true;
                         Seconds = 0;
                         CurrentPlayer = GetNextPerson(CurrentPlayer!.Position);
-                    });
-            });
+                    })
+                    .DisposeWith(_onDeactivate);
+            })
+            .DisposeWith(_onDeactivate);
 
         // Change round number on next day
         this.WhenAnyValue(vm => vm.Stage)
-            .Subscribe(stage => Round = stage is GameStage.Day ? Round + 1 : Round);
+            .Subscribe(stage => Round = stage is GameStage.Day ? Round + 1 : Round)
+            .DisposeWith(_onDeactivate);
         
         // Change first speaker on next round
         this.WhenAnyValue(vm => vm.Round)
@@ -148,7 +171,8 @@ public sealed class RoundViewModel : Page
                 
                 CurrentPlayer = GetNextPerson(_firstSpeaker?.Position ?? 0);
                 _firstSpeaker = Players[(round - 1) % Players.Count];
-            });
+            })
+            .DisposeWith(_onDeactivate);
         
         // Dependency for timer on Paused prop
         this.WhenAnyValue(x => x.Paused)
@@ -156,7 +180,8 @@ public sealed class RoundViewModel : Page
             {
                 if (x) _secondTimer.Stop();
                 else _secondTimer.Start();
-            });
+            })
+            .DisposeWith(_onDeactivate);
         
         // Paused after 1 minute
         this.WhenAnyValue(property1: vm => vm.Seconds,
@@ -167,11 +192,13 @@ public sealed class RoundViewModel : Page
                 Paused = x;
                 // Get next speakable player
                 CurrentPlayer = GetNextPerson(CurrentPlayer!.Position);
-            });
+            })
+            .DisposeWith(_onDeactivate);
 
         // Change time display each second
         this.WhenAnyValue(x => x.Seconds)
-            .Subscribe(x => TimeDisplay = $"{x / 60}:{x % 60}");
+            .Subscribe(x => TimeDisplay = $"{x / 60}:{x % 60}")
+            .DisposeWith(_onDeactivate);
         
         // Update players list
         Statistic.Players.CountChanged
@@ -201,7 +228,8 @@ public sealed class RoundViewModel : Page
                             
                             if (kicked && NominatedPlayers.Contains(player))
                                 NominatedPlayers.Remove(player);
-                        });
+                        })
+                        .DisposeWith(_onDeactivate);
                 }
 
                 Stage = GameStage.Day;
@@ -210,24 +238,21 @@ public sealed class RoundViewModel : Page
                 
                 _firstSpeaker = Players.FirstOrDefault(x => x is { IsMuted: false, IsKickedOut: false });
                 CurrentPlayer = _firstSpeaker;
-            });
-
-        SwitchStageCommand = ReactiveCommand.Create(SwitchStage);
+            })
+            .DisposeWith(_onDeactivate);
     }
 
-    #region + Commands +
-
-    public ReactiveCommand<Unit, Unit> SwitchTimerCommand => ReactiveCommand.Create(() =>
+    public override void OnDeactivate()
     {
-        Paused ^= true;
-        if (!Paused && Seconds >= 60) Seconds = 0;
-    });
+        _skipSubscription?.Dispose();
+        _nominationSub.Dispose();
+        _onDeactivate.Dispose();
+    }
 
-    public ReactiveCommand<Unit, Unit> SwitchStageCommand { get; }
-    
-    #endregion
-    
-    #region Methods
+    public override void OnReset()
+    {
+        OnDeactivate();
+    }
 
     private Player? GetNextPerson(int startFromPosition)
     {

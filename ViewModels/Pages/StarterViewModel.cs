@@ -36,7 +36,7 @@ namespace Mafia.ViewModels.Pages
         public StarterViewModel(ILogicalParent parent) : base(parent)
         {
             CanMoveBack = this.WhenAnyValue(vm => vm.Header, header => header is not EmptyHeader);
-            CanMoveForward = this.WhenAnyValue(vm => vm.MasterName.Length, length => length > 0);
+            CanMoveForward = this.WhenAnyValue(vm => vm.MasterName, name => name.Length > 0);
         }
         
         #region + Commands +
@@ -45,6 +45,19 @@ namespace Mafia.ViewModels.Pages
         {
             Statistic.DefineMaster(MasterName);
         });
+
+        #endregion
+        
+        #region + Methods +
+        
+        public override void OnActivate() { }
+
+        public override void OnDeactivate() { }
+
+        public override void OnReset()
+        {
+            MasterName = string.Empty;
+        }
 
         #endregion
     }

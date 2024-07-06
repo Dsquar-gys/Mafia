@@ -26,6 +26,10 @@ namespace Mafia.ViewModels.Pages
 
         protected ILogicalParent Parent { get; init; } = parent;
 
+        public abstract void OnActivate();
+        public abstract void OnDeactivate();
+        public abstract void OnReset();
+
         //protected abstract void Initialize();
     }
 }
