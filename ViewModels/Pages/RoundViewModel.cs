@@ -169,6 +169,11 @@ public sealed class RoundViewModel : Page
             {
                 if (Players.Count <= 0 || round <= 0) return;
                 
+                foreach (var player in Players)
+                {
+                    player.IsNominated = false;
+                    NominatedPlayers.Clear();
+                }
                 CurrentPlayer = GetNextPerson(_firstSpeaker?.Position ?? 0);
                 _firstSpeaker = Players[(round - 1) % Players.Count];
             })

@@ -73,7 +73,7 @@ public class Player : ReactiveObject
     public bool IsNominated
     {
         get => _isNominated;
-        private set => this.RaiseAndSetIfChanged(ref _isNominated, value);
+        set => this.RaiseAndSetIfChanged(ref _isNominated, value);
     }
     
     #endregion
@@ -91,7 +91,6 @@ public class Player : ReactiveObject
     #region + Commands +
     
     public ReactiveCommand<Unit, Unit> SetFoulCommand => ReactiveCommand.Create(() => { Fouls++; });
-    public ReactiveCommand<Unit, Unit> NominateCommand => ReactiveCommand.Create(() => { IsNominated = true; });
     public ReactiveCommand<Unit, Unit> KickCommand => ReactiveCommand.Create(() => { IsKickedOut = true; });
     
     #endregion
