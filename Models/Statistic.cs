@@ -1,6 +1,4 @@
-﻿using System;
-using DynamicData;
-using Mafia.Models.Enums;
+﻿using DynamicData;
 
 namespace Mafia.Models
 {

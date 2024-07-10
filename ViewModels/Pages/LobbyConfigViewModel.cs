@@ -15,6 +15,7 @@ namespace Mafia.ViewModels.Pages
         #region + Private fields +
         
         private int _playerIndexer;
+        private readonly Random _random = new();
         private IDisposable _connectionSubscription;
 
         #endregion
@@ -33,14 +34,12 @@ namespace Mafia.ViewModels.Pages
         {
             get
             {
-                Random random = new();
-
                 var existing = Players.Select(x => x.Nickname).ToArray();
                 var total = Enum.GetNames(typeof(DefaultName));
 
                 var rest = total.Except(existing).ToArray();
 
-                if (rest.Length != 0) return rest[random.Next(rest.Length)];
+                if (rest.Length != 0) return rest[_random.Next(rest.Length)];
                 
                 Console.WriteLine("Out of default names...");
                 return "NickName";

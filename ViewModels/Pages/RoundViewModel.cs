@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using System.Timers;
 using DynamicData;
 using Mafia.Models;
@@ -172,8 +171,10 @@ public sealed class RoundViewModel : Page
                 foreach (var player in Players)
                 {
                     player.IsNominated = false;
-                    NominatedPlayers.Clear();
                 }
+                
+                NominatedPlayers.Clear();
+                
                 CurrentPlayer = GetNextPerson(_firstSpeaker?.Position ?? 0);
                 _firstSpeaker = Players[(round - 1) % Players.Count];
             })

@@ -73,7 +73,7 @@ namespace Mafia.ViewModels
                     pageChange.Current!.OnActivate();
                     
                     _subscriptionForward?.Dispose();
-                    _subscriptionForward = pageChange.Current.CanMoveForward.Subscribe(x => CanMoveForwardCore.OnNext(x));
+                    _subscriptionForward = pageChange.Current.CanMoveForward.Subscribe(CanMoveForwardCore.OnNext);
                     
                     _subscriptionBackward?.Dispose();
                     _subscriptionBackward = pageChange.Current.CanMoveBack.Subscribe(CanMoveBackCore.OnNext);
@@ -110,10 +110,6 @@ namespace Mafia.ViewModels
 
         public void EndSession(GameOver sessionResult)
         {
-            // List of mafia names
-            var mafias = Statistic.Players.Items.Where(x => x.Role is GameRole.Mafia).Select(x => x.Nickname + ", ")
-                .Aggregate(string.Empty, (current, mafia) => current + mafia);
-            
             var title = sessionResult switch
             {
                 GameOver.None => "It's draw",
@@ -122,19 +118,14 @@ namespace Mafia.ViewModels
                 _ => throw new InvalidDataException()
             };
             
-            var message = sessionResult switch
-            {
-                GameOver.None =>      $"Detective: {Statistic.Players.Items.FirstOrDefault(x => x.Role is GameRole.Detective)?.Nickname}\n" +
-                                      $"Don: {Statistic.Players.Items.FirstOrDefault(x => x.Role is GameRole.Don)?.Nickname}\n" +
-                                      $"Mafia: {mafias}",
-                GameOver.BlackWins => $"Detective: {Statistic.Players.Items.FirstOrDefault(x => x.Role is GameRole.Detective)?.Nickname}\n" +
-                                      $"Don: {Statistic.Players.Items.FirstOrDefault(x => x.Role is GameRole.Don)?.Nickname}\n" +
-                                      $"Mafia: {mafias}",
-                GameOver.RedWins =>   $"Detective: {Statistic.Players.Items.FirstOrDefault(x => x.Role is GameRole.Detective)?.Nickname}\n" +
-                                      $"Don: {Statistic.Players.Items.FirstOrDefault(x => x.Role is GameRole.Don)?.Nickname}\n" +
-                                      $"Mafia: {mafias}",
-                _ => throw new InvalidDataException()
-            };
+            // List of mafia names
+            var mafias = Statistic.Players.Items.Where(x => x.Role is GameRole.Mafia).Select(x => x.Nickname + ", ")
+                .Aggregate(string.Empty, (current, mafia) => current + mafia);
+
+            var message =
+                $"Detective: {Statistic.Players.Items.FirstOrDefault(x => x.Role is GameRole.Detective)?.Nickname}\n" +
+                $"Don: {Statistic.Players.Items.FirstOrDefault(x => x.Role is GameRole.Don)?.Nickname}\n" +
+                $"Mafia: {mafias}";
             
             var notification = new Notification(title, message[..^2]);
             

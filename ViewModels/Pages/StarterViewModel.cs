@@ -6,7 +6,7 @@ using ReactiveUI;
 
 namespace Mafia.ViewModels.Pages
 {
-    public class StarterViewModel : Page
+    public sealed class StarterViewModel : Page
     {
         #region + Private fields +
         
@@ -16,7 +16,7 @@ namespace Mafia.ViewModels.Pages
         
         #region + Properties +
 
-        public override HeaderVMBase Header { get; init; } = new EmptyHeader();
+        public override HeaderVMBase Header { get; init; }
         
         public override IObservable<bool> CanMoveForward { get; }
         
@@ -35,7 +35,11 @@ namespace Mafia.ViewModels.Pages
 
         public StarterViewModel(ILogicalParent parent) : base(parent)
         {
+            Header = new EmptyHeader();
+            
+            // Permanent false
             CanMoveBack = this.WhenAnyValue(vm => vm.Header, header => header is not EmptyHeader);
+            // On game master name length
             CanMoveForward = this.WhenAnyValue(vm => vm.MasterName, name => name.Length > 0);
         }
         
