@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Timers;
 using DynamicData;
 using Mafia.Models;
 using Mafia.Models.Enums;
@@ -20,7 +19,7 @@ public sealed class RoundViewModel : Page
     private bool _paused = true;
     private int _seconds;
     private string? _timeDisplay;
-    private readonly Timer _secondTimer = new();
+    private readonly Timer _secondTimer;
     private Player? _currentPlayer;
     private Player? _firstSpeaker;
     private GameStage _stage;
@@ -109,9 +108,7 @@ public sealed class RoundViewModel : Page
 
     public RoundViewModel(ILogicalParent parent) : base(parent)
     {
-        _secondTimer.AutoReset = true;
-        _secondTimer.Interval = 1000;
-        _secondTimer.Elapsed += (_, _) => Seconds++;
+        _secondTimer = new(() => { Seconds++; }, 1000);
 
         Header = new RoundHeader(this);
 
@@ -182,10 +179,10 @@ public sealed class RoundViewModel : Page
         
         // Dependency for timer on Paused prop
         this.WhenAnyValue(x => x.Paused)
-            .Subscribe(x =>
+            .Subscribe(async x =>
             {
                 if (x) _secondTimer.Stop();
-                else _secondTimer.Start();
+                else await _secondTimer.Start();
             })
             .DisposeWith(_onDeactivate);
         

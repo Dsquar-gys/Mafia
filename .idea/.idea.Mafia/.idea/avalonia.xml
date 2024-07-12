@@ -4,10 +4,18 @@
     <option name="projectPerEditor">
       <map>
         <entry key="App.axaml" value="Mafia.csproj" />
+        <entry key="AvaloniaApplication/AvaloniaApplication/Views/MainView.axaml" value="Mafia.csproj" />
+        <entry key="AvaloniaApplication1/AvaloniaApplication1/Views/MainView.axaml" value="AvaloniaApplication1/AvaloniaApplication1.Browser/AvaloniaApplication1.Browser.csproj" />
         <entry key="Headers/EmptyHeaderView.axaml" value="Mafia.csproj" />
         <entry key="Headers/LobbyConfigHeaderView.axaml" value="Mafia.csproj" />
         <entry key="Headers/RoundHeaderView.axaml" value="Mafia.csproj" />
         <entry key="Headers/TeamsConfigHeaderView.axaml" value="Mafia.csproj" />
+        <entry key="Mafia.Web/Mafia.Web/Views/MainView.axaml" value="Mafia.csproj" />
+        <entry key="Mafia/App.axaml" value="Maf.Browser/Maf.Browser.csproj" />
+        <entry key="Mafia/Views/MainView.axaml" value="Mafia.Browser/Mafia.Browser.csproj" />
+        <entry key="Mafia/Views/MainWindow.axaml" value="Maf.Browser/Maf.Browser.csproj" />
+        <entry key="Mafia/Views/Pages/RoundView.axaml" value="Mafia.Browser/Mafia.Browser.csproj" />
+        <entry key="Mafia/Views/Pages/StarterView.axaml" value="Mafia.Browser/Mafia.Browser.csproj" />
         <entry key="Models/IconResources.axaml" value="Mafia.csproj" />
         <entry key="Templated Controls/PlayerCard.axaml" value="Mafia.csproj" />
         <entry key="Views/Headers/EmptyHeaderView.axaml" value="Mafia.csproj" />

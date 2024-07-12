@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mafia", "Mafia.csproj", "{D648AD77-DF12-4278-9A6D-A21BBA2C3816}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mafia", "Mafia/Mafia.csproj", "{D648AD77-DF12-4278-9A6D-A21BBA2C3816}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mafia.Desktop", "Mafia.Desktop\Mafia.Desktop.csproj", "{BA36CF86-9C92-43BE-8975-EE972994650E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mafia.Browser", "Mafia.Browser\Mafia.Browser.csproj", "{EBF53091-0252-4155-890C-45A1FBC9A2A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{D648AD77-DF12-4278-9A6D-A21BBA2C3816}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D648AD77-DF12-4278-9A6D-A21BBA2C3816}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D648AD77-DF12-4278-9A6D-A21BBA2C3816}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA36CF86-9C92-43BE-8975-EE972994650E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA36CF86-9C92-43BE-8975-EE972994650E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA36CF86-9C92-43BE-8975-EE972994650E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA36CF86-9C92-43BE-8975-EE972994650E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBF53091-0252-4155-890C-45A1FBC9A2A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBF53091-0252-4155-890C-45A1FBC9A2A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBF53091-0252-4155-890C-45A1FBC9A2A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBF53091-0252-4155-890C-45A1FBC9A2A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

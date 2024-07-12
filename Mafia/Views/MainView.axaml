@@ -1,27 +1,23 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:Mafia.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:system="clr-namespace:System;assembly=mscorlib"
-        mc:Ignorable="d"
-		d:DesignWidth="800" MinWidth="535"
-		d:DesignHeight="450" MinHeight="300"
-        x:Class="Mafia.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="Mafia">
-
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Mafia.ViewModels"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Mafia.Views.MainView"
+             x:DataType="vm:MainViewModel">
+    
     <Design.DataContext>
-        <vm:MainWindowViewModel/>
+        <vm:MainViewModel />
     </Design.DataContext>
-	
-	<Window.Resources>
-		<system:Double x:Key="HeaderHeight">60</system:Double>
-		<system:TimeSpan x:Key="TransitionDuration">0:00:00.600</system:TimeSpan>
-	</Window.Resources>
-
-	<Grid>
+    
+    <UserControl.Resources>
+        <system:Double x:Key="HeaderHeight">60</system:Double>
+        <system:TimeSpan x:Key="TransitionDuration">0:00:00.600</system:TimeSpan>
+    </UserControl.Resources>
+    
+    <Grid>
 		<Grid.RowDefinitions>
 			<!-- Header -->
 			<RowDefinition Height="Auto"
@@ -110,5 +106,5 @@
 		</TransitioningContentControl>
 		
 	</Grid>
-	
-</Window>
+    
+</UserControl>

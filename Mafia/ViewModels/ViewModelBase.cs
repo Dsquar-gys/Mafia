@@ -1,6 +1,4 @@
-﻿using System;
-using Mafia.Models;
-using ReactiveUI;
+﻿using ReactiveUI;
 
 namespace Mafia.ViewModels
 {

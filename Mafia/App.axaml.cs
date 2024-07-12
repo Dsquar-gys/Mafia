@@ -4,7 +4,9 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Notifications;
 using Avalonia.Markup.Xaml;
 using Mafia.ViewModels;
+using Mafia.ViewModels.Pages;
 using Mafia.Views;
+using Mafia.Views.Pages;
 
 namespace Mafia
 {
@@ -25,10 +27,18 @@ namespace Mafia
                 {
                     var notifications = new WindowNotificationManager(TopLevel.GetTopLevel(desktop.MainWindow));
 
-                    desktop.MainWindow.DataContext = new MainWindowViewModel()
-                    {
-                        NotificationManager = notifications
-                    };
+                    desktop.MainWindow.DataContext = new MainWindowViewModel(notifications);
+                };
+            }
+            else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+            {
+                singleViewPlatform.MainView = new MainView();
+
+                var notifications = new WindowNotificationManager(TopLevel.GetTopLevel(singleViewPlatform.MainView));
+
+                singleViewPlatform.MainView.DataContext = new MainViewModel()
+                {
+                    NotificationManager = notifications
                 };
             }
 

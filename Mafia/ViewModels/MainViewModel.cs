@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -14,7 +14,7 @@ using Notification = Avalonia.Controls.Notifications.Notification;
 
 namespace Mafia.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase, ILogicalParent
+    public class MainViewModel : ViewModelBase, ILogicalParent
     {
         #region + Private Fields +
 
@@ -50,7 +50,7 @@ namespace Mafia.ViewModels
 
         #endregion
         
-        public MainWindowViewModel()
+        public MainViewModel()
         {
             _pages =
             [
